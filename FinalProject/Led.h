@@ -8,7 +8,7 @@ class Led
 {
   public:
     Led(int pin);
-    void setValue(uint32_t value);
+    void setValue(uint8_t value);
   private:
     int pin;
 };

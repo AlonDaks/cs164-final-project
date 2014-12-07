@@ -6,7 +6,7 @@ Led::Led(int pin)
 	pinMode(pin, OUTPUT);   
 }
 
-void Led::setValue(int value){
+void Led::setValue(uint8_t value){
 	if(value == 1){
 		digitalWrite(pin, HIGH);
 	} else{
