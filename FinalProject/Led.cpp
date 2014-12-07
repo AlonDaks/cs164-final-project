@@ -1,9 +1,5 @@
-#include "Arduino.h"
 #include "Led.h"
-#include "stdint.h"
-/*
- * 	Constructor.  Initializes the pins and the instance variables.
- */
+
 Led::Led(int pin)
 {
 	this->pin = pin;

@@ -1,9 +1,5 @@
-#include "Arduino.h"
 #include "Sequence.h"
-#include "stdint.h"
-/*
- * 	Constructor.  Initializes the pins and the instance variables.
- */
+
 Sequence::Sequence()
 {
 	// Define pins for the LED display:

@@ -1,9 +1,5 @@
-#include "Arduino.h"
 #include "SequencePlayer.h"
-#include "stdint.h"
-/*
- *  Constructor.  Initializes the pins and the instance variables.
- */
+
 SequencePlayer::SequencePlayer(){
   // Define pins for the LED display:
   this->active_lights = ActiveLight[20]; //COMPLETE RESIZING / CHANGE INIT SIZE FROM 20 IF YOU WANT

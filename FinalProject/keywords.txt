@@ -1,9 +1,9 @@
 Sequence	KEYWORD1
 add	KEYWORD2
-Color	KEYWORD3
-Led	KEYWORD4
-setValue	KEYWORD5
-SequencePlayer	KEYWORD6
-addActiveLight	KEYWORD7
-update	KEYWORD8
-RGBLed	KEYWORD9
+Color	KEYWORD1
+Led	KEYWORD1
+setValue	KEYWORD2
+SequencePlayer	KEYWORD1
+addActiveLight	KEYWORD2
+update	KEYWORD2
+RGBLed	KEYWORD1

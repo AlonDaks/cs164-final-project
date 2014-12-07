@@ -1,3 +1,9 @@
+#ifndef SEQUENCE_H
+#define SEQUENCE_H
+
+#include "Arduino.h"
+#include "stdint.h"
+
 class Sequence
 {
   public:
@@ -9,3 +15,5 @@ class Sequence
     int num_frames;
     struct Keyframe;
 };
+
+#endif
