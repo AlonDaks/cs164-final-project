@@ -1,8 +1,11 @@
 class Sequence
 {
   public:
-    Sequence(int _pin);
-    void blink();
+    Sequence();
+    void Sequence::add(uint16_t duration, Color c);
+    struct Color;
   private:
-    int pin;
+    Keyframe[] frames;
+    int num_frames;
+    struct Keyframe;
 };

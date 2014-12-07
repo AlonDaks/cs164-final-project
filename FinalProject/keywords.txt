@@ -1,2 +1,9 @@
 Sequence	KEYWORD1
-blink	KEYWORD2
+add	KEYWORD2
+Color	KEYWORD3
+Led	KEYWORD4
+setValue	KEYWORD5
+SequencePlayer	KEYWORD6
+addActiveLight	KEYWORD7
+update	KEYWORD8
+RGBLed	KEYWORD9
