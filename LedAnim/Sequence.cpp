@@ -1,21 +1,14 @@
-/*#include "Sequence.h"
+#include "Sequence.h"
 #include <stdlib.h>
 
+void Sequence::updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Color& currentColor) {
+	
+}
+
 Sequence::Sequence() {
-	max_frames = 20;
-	frames = (LedKeyframe*) malloc(max_frames * sizeof(LedKeyframe));
-	num_frames = 0;    
+	/* TODO */   
 }
 
 Sequence::~Sequence() {
-	free(frames);
+	/* TODO */
 }
-
-void Sequence::addLed(uint16_t duration, uint8_t value) {
-	if (num_frames < max_frames) {
-		frames[num_frames].duration = duration;
-		frames[num_frames].value = value;
-		num_frames++;
-	}
-}
-*/

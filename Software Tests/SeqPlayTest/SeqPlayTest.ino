@@ -1,5 +1,5 @@
 #include <LedAnim.h>
-
+#include <Sequence.h>
 int test = 1;
 
 ///////////////////////////////////
@@ -20,9 +20,12 @@ SeqAnim sq2 = SeqAnim();
 FnAnim fnA1 = FnAnim(f);
 FnAnim fnA2 = FnAnim(f);
 
+Color c;
+Sequence seq = Sequence();
 
 void doTest() {
   //Serial.println(fnA2.isEnd());
+  Sequence::updateSequence(0, seq, c);
 }
 
 void setup() {

@@ -7,19 +7,22 @@
 
 #include <stdint.h>
 
+#define MAX_LIGHTS 5
+
 class Led;
 class LedAnim;
 
 struct ActiveLight {
-	Led* led;
-	LedAnim* anim;
-	uint16_t curIndex;  // index of last processed keyframe
+	Led& led;
+	LedAnim& anim;
 	uint16_t elapsedTime;
 };
 
 class SequencePlayer {
 public:
 	SequencePlayer();
+
+	/* main update function */
 	void update();
 
 	/* Stops all animations. */
@@ -27,12 +30,17 @@ public:
 
 	/* Continues all animations. */
 	void resumeAll();
-	//void addActiveLight(Led& led, Sequence& seq);
+	
+	/* Plays a particular animation */
+	void play(Led& led, LedAnim& seq);
+
+	/* Stops the animation running on the specified LED */
+	void stop(Led& led);
 private:
-	ActiveLight active_lights[20];
+	//ActiveLight activeLights[MAX_LIGHTS];
 	bool isUpdating;
-	uint8_t num_active_lights;
-	unsigned long last_update_time;
+	uint8_t numActiveLights;
+	unsigned long lastUpdateTime;
 };
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef LED_ANIM_SEQUENCE_H
 #define LED_ANIM_SEQUENCE_H
 
-/*#include "stdint.h"
+#include "stdint.h"
 
 struct Color {
 	uint8_t red;
@@ -10,20 +10,21 @@ struct Color {
 };
 
 struct Keyframe {
-  uint16_t duration;
-  Color value;
-  uint8_t transition;
+	uint16_t duration;
+	Color value;
+	uint8_t transition;
 };
 
 class Sequence {
-  friend class SequencePlayer;
-  Keyframe* frames;
-  uint16_t num_frames;
-  uint16_t max_frames;
 public:
-    Sequence();
-    ~Sequence();
-    void addLed(uint16_t duration, uint8_t value);
-};*/
+	static void updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Color& currentColor);
+public:
+	Sequence();
+	~Sequence();
+private:
+	Keyframe* frames;
+	uint16_t num_frames;
+	uint16_t max_frames;
+};
 
 #endif
