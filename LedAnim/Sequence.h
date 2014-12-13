@@ -18,13 +18,25 @@ struct Keyframe {
 class Sequence {
 public:
 	static void updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Color& currentColor);
+
 public:
 	Sequence();
 	~Sequence();
+
+	void append(const Keyframe frame);
+	void insert(uint16_t index, const Keyframe frame);
+	Keyframe get(uint16_t index);
+	Keyframe remove(uint16_t index);
+	uint16_t size() const;
+
 private:
 	Keyframe* frames;
-	uint16_t num_frames;
-	uint16_t max_frames;
+	uint16_t count;
+	uint16_t capacity;
+	uint16_t duration;
+
+	void resize(const uint16_t newCapacity);
+	void exit(const char* message) const;
 };
 
 #endif
