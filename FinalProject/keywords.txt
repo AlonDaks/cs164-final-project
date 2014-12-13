@@ -7,3 +7,4 @@ SequencePlayer	KEYWORD1
 addActiveLight	KEYWORD2
 update	KEYWORD2
 RGBLed	KEYWORD1
+Array KEYWORD1

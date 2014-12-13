@@ -2,7 +2,7 @@
 #define RGBLED_H
 
 
-#include "Arduino.h"
+/*#include "Arduino.h"
 #include "Sequence.h"
 #include "stdint.h"
 
@@ -15,6 +15,6 @@ class RGBLed
     int red_pin;
     int green_pin;
     int blue_pin;
-};
+};*/
 
 #endif

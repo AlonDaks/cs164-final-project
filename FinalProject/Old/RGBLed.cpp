@@ -1,10 +1,10 @@
-#include "Arduino.h"
+/*#include "Arduino.h"
 #include "RGBLed.h"
 #include "Sequence.h"
 #include "stdint.h"
 /*
  * 	Constructor.  Initializes the pins and the instance variables.
- */
+
 RGBLed::RGBLed(int red_pin, int green_pin, int blue_pin)
 {
 	this->red_pin = red_pin;
@@ -19,4 +19,4 @@ void RGBLed::setValue(Color c) {
 	analogWrite(red_pin, c.red);
 	analogWrite(green_pin, c.green);
 	analogWrite(blue_pin, c.blue);
-}
+}*/

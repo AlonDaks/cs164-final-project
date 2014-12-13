@@ -1,30 +1,21 @@
-#include "Sequence.h"
+/*#include "Sequence.h"
+#include <stdlib.h>
 
-Sequence::Sequence()
-{
-	// Define pins for the LED display:
-	this->max_frames = 20;
-	this->frames = (LedKeyframe*) malloc(this->max_frames * sizeof(LedKeyframe));
-	this->num_frames = 0;    
+Sequence::Sequence() {
+	max_frames = 20;
+	frames = (LedKeyframe*) malloc(max_frames * sizeof(LedKeyframe));
+	num_frames = 0;    
 }
 
-Sequence::~Sequence()
-{
-	free(this->frames);
+Sequence::~Sequence() {
+	free(frames);
 }
 
-// void Sequence::addRGB(uint16_t duration, Color c){
-// 	RGBKeyframe frame;
-// 	frame.duration = duration;
-// 	frame.value = color;
-// 	frames[num_frames]  =  frame;
-// 	num_frames++;
-// }
-
-void Sequence::addLed(uint16_t duration, uint8_t value){
-	if (this->num_frames < this->max_frames) {
-		this->frames[this->num_frames].duration = duration;
-		this->frames[this->num_frames].value = value;
-		this->num_frames++;
+void Sequence::addLed(uint16_t duration, uint8_t value) {
+	if (num_frames < max_frames) {
+		frames[num_frames].duration = duration;
+		frames[num_frames].value = value;
+		num_frames++;
 	}
 }
+*/

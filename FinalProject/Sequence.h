@@ -1,9 +1,7 @@
-#ifndef SEQUENCE_H
-#define SEQUENCE_H
+#ifndef LED_ANIM_SEQUENCE_H
+#define LED_ANIM_SEQUENCE_H
 
-#include "Arduino.h"
-#include "stdint.h"
-
+/*#include "stdint.h"
 
 struct Color {
 	uint8_t red;
@@ -11,26 +9,21 @@ struct Color {
 	uint8_t blue;
 };
 
-struct RGBKeyframe {
-  uint16_t duration;		// offset in ms
+struct Keyframe {
+  uint16_t duration;
   Color value;
+  uint8_t transition;
 };
 
-struct LedKeyframe {
-  uint16_t duration;		// offset in ms
-  uint8_t value;
-};
-
-class Sequence
-{
-  public:
+class Sequence {
+  friend class SequencePlayer;
+  Keyframe* frames;
+  uint16_t num_frames;
+  uint16_t max_frames;
+public:
     Sequence();
     ~Sequence();
-    //void addRGB(uint16_t duration, Color c);
     void addLed(uint16_t duration, uint8_t value);
-    LedKeyframe* frames;
-    uint16_t num_frames;
-    uint16_t max_frames;
-};
+};*/
 
 #endif

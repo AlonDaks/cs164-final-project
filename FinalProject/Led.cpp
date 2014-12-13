@@ -1,4 +1,4 @@
-#include "Led.h"
+/*#include "Led.h"
 
 Led::Led(int pin)
 {
@@ -12,4 +12,4 @@ void Led::setValue(uint8_t value){
 	} else{
 		digitalWrite(pin, LOW);
 	}
-}
+}*/
