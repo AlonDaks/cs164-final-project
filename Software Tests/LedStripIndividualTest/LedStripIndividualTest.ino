@@ -10,22 +10,22 @@
 #include "LedStrip.h"
 
 ///////////////////////////////////
+//  Hardware:
 
 const int dataPin = 16;    //yellow
 const int clockPin = 15;   //green
 LedStrip ledStrip = LedStrip(25, dataPin, clockPin);
 
 ///////////////////////////////////
+// Sequence:
 
-Color currentColor;
-
-// Create Sequence 
 Sequence seq = Sequence();
 
-// Subclass AnimFunc with custom update
 struct LERPTest : public AnimFunc {
+  Color currentColor;
   void update(uint16_t elapsedTime) {
-    Sequence::applySequence(elapsedTime, seq, ledStrip);
+    Sequence::updateSequence(elapsedTime, seq, currentColor);
+    ledStrip.setColor(currentColor.red, currentColor.green, currentColor.blue);
   }
   bool isOver(uint16_t elapsedTime) {
     return elapsedTime > 10000000;

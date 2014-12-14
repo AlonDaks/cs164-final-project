@@ -1,3 +1,4 @@
+#include <Color.h>
 #include <Led.h>
 #include <LedAnim.h>
 #include <AnimPlayer.h>
@@ -31,7 +32,7 @@ uint16_t rgbTime = 1000;
 // Sets the color of the LED to red
 struct PlayRed : public AnimFunc {
   void update(uint16_t elapsedTime) {
-    rgbLed1.setColor(255, 0, 0);
+    rgbLed1.setColor(RED);
   }
   bool isOver(uint16_t elapsedTime) { return elapsedTime > rgbTime; }
 };
@@ -39,7 +40,7 @@ struct PlayRed : public AnimFunc {
 // Sets the color of the LED to green
 struct PlayGreen : public AnimFunc {
   void update(uint16_t elapsedTime) {
-    rgbLed1.setColor(0, 255, 0);
+    rgbLed1.setColor(GREEN);
   }
   bool isOver(uint16_t elapsedTime) { return elapsedTime > rgbTime; }
 };
@@ -47,7 +48,7 @@ struct PlayGreen : public AnimFunc {
 // Sets the color of the LED to blue
 struct PlayBlue : public AnimFunc {
   void update(uint16_t elapsedTime) {
-    rgbLed1.setColor(0, 0, 255);
+    rgbLed1.setColor(BLUE);
   }
   bool isOver(uint16_t elapsedTime) { return elapsedTime > rgbTime; }
 };
@@ -60,7 +61,7 @@ uint16_t bcTime = 1666;
 // Sets the color of the LED to green
 struct PlayYellow : public AnimFunc {
   void update(uint16_t elapsedTime) {
-    rgbLed2.setColor(255, 255, 0);
+    rgbLed2.setColor(YELLOW);
   }
   bool isOver(uint16_t elapsedTime) { return elapsedTime > bcTime; }
 };
@@ -68,7 +69,7 @@ struct PlayYellow : public AnimFunc {
 // Sets the color of the LED to blue
 struct PlayCyan : public AnimFunc {
   void update(uint16_t elapsedTime) {
-    rgbLed2.setColor(0, 255, 255);
+    rgbLed2.setColor(CYAN);
   }
   bool isOver(uint16_t elapsedTime) { return elapsedTime > bcTime; }
 };

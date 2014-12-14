@@ -26,8 +26,7 @@ Sequence seq = Sequence();
 // Subclass AnimFunc with custom update
 struct LERPTest : public AnimFunc {
   void update(uint16_t elapsedTime) {
-    Sequence::updateSequence(elapsedTime, seq, currentColor);
-    rgbLed.setColor(currentColor.red, currentColor.green, currentColor.blue);
+    Sequence::applySequence(elapsedTime, seq, rgbLed);
   }
   bool isOver(uint16_t elapsedTime) {
     return elapsedTime > seq.getDuration() * 2; // Loops over the sequence twice

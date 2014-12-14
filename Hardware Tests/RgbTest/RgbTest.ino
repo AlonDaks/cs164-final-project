@@ -26,8 +26,8 @@ void setup() {
 }
 
 void loop() {
-  rgbLed.setColor(0xFF, 0x00, 0xCC);
+  rgbLed.setColor(ORANGE);
   delay(1000);
-  rgbLed.setColor(0x00, 0xFF, 0x00);
+  rgbLed.setColor(GREEN);
   delay(1000);
 }

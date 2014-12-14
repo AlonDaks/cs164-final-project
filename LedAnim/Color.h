@@ -1,7 +1,13 @@
-#ifndef LED_ANIM_COLORS_H
-#define LED_ANIM_COLORS_H
+#ifndef LED_ANIM_COLOR_H
+#define LED_ANIM_COLOR_H
 
-#include "Sequence.h"
+#include <stdint.h>
+
+struct Color {
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
+};
 
 Color RED = {255, 0, 0};
 Color ORANGE = {255, 125, 0};
@@ -17,5 +23,3 @@ Color MAGENTA = {255, 0, 255};
 Color RASPBERRY = {255, 0, 125};
 
 #endif
-
-

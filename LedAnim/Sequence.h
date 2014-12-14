@@ -2,12 +2,8 @@
 #define LED_ANIM_SEQUENCE_H
 
 #include "stdint.h"
-
-struct Color {
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-};
+#include "Array.h"
+#include "Led.h"
 
 struct Keyframe {
 	uint16_t duration;
@@ -18,6 +14,8 @@ struct Keyframe {
 class Sequence {
 public:
 	static void updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Color& currentColor);
+	static void applySequence(uint16_t elapsedTime, Sequence& seq, ILed& led);
+	static void applySequenceToAll(uint16_t elapsedTime, Sequence& seq, Array<ILed>& leds, uint16_t (*delay) (uint8_t));
 
 public:
 	Sequence();

@@ -1,5 +1,4 @@
 #include "Sequence.h"
-#include <stdlib.h>
 #include <Arduino.h>
 
 #define DEFAULT_SIZE 8
@@ -41,6 +40,12 @@ void Sequence::updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Col
 		}
 		timeRemaining -= curFrame.duration;
 	}
+}
+
+void Sequence::applySequence(uint16_t elapsedTime, Sequence& seq, ILed& led) {
+	Color c;
+	updateSequence(elapsedTime, seq, c);
+	led.setColor(c);
 }
 
 Sequence& Sequence::append(const Keyframe frame) {

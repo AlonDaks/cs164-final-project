@@ -5,7 +5,15 @@
 #ifndef LED_ANIM_H
 #define LED_ANIM_H
 
-#include "AnimFunc.h"
+#include <stdint.h>
+
+struct AnimFunc {
+	/* Returns whether this animation is over */
+	virtual bool isOver(uint16_t elapsedTime) = 0;
+
+	/* Called each tick to update the LEDs */
+	virtual void update(uint16_t elapsedTime) = 0;
+};
 
 /* Defines type of LedAnim */
 //enum AnimType { ANIM_FUNC, ANIM_SEQ };

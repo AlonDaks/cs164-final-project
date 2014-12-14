@@ -10,9 +10,9 @@ RgbLed::RgbLed(uint8_t brightness, uint8_t cPin, uint8_t rPin, uint8_t gPin, uin
 	pinMode(bPin, OUTPUT);   
 }
 
-void RgbLed::setColor(uint8_t r, uint8_t g, uint8_t b) {
+void RgbLed::setColor(Color& color) {
 	analogWrite(cPin, brightness);
-	analogWrite(rPin, brightness - ((uint16_t) r * brightness)/0xFF);
-	analogWrite(gPin, brightness - ((uint16_t) g * brightness)/0xFF);
-	analogWrite(bPin, brightness - ((uint16_t) b * brightness)/0xFF);
+	analogWrite(rPin, brightness - ((uint16_t) color.red * brightness)/0xFF);
+	analogWrite(gPin, brightness - ((uint16_t) color.green * brightness)/0xFF);
+	analogWrite(bPin, brightness - ((uint16_t) color.blue * brightness)/0xFF);
 }
