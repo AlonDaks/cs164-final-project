@@ -40,12 +40,9 @@ LedAnim anim = LedAnim(lt); // Create anim
 AnimPlayer player = AnimPlayer();
 
 void setup() {
-  Color kfc1 = RED;
-  Keyframe kf1 = {1000, kfc1, 0 }; // LERP transition
-  Color kfc2 = BLUE;
-  Keyframe kf2 = {500, kfc2, 0 }; // NONE transition
-  seq.append(kf1);
-  seq.append(kf2);
+  Keyframe kf1 = {1000, OCEAN, 1 }; // LERP transition
+  Keyframe kf2 = {500, RASPBERRY, 1 }; // NONE transition
+  seq.append(kf1).append(kf2);
   
   uint16_t rec1 = player.play(anim);
 }

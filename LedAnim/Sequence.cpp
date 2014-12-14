@@ -32,7 +32,7 @@ void Sequence::updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Col
 				currentColor.blue = curFrame.value.blue;
 			} else {	// LERP
 				Keyframe nextFrame = seq.frames[ (i+1) % seq.count ];
-				float interp = (float) elapsedTime / (float) curFrame.duration;
+				float interp = (float) timeRemaining / (float) curFrame.duration;
 				currentColor.red = (1-interp) * curFrame.value.red + interp * nextFrame.value.red;
 				currentColor.green = (1-interp) * curFrame.value.green + interp * nextFrame.value.green;
 				currentColor.blue = (1-interp) * curFrame.value.blue + interp * nextFrame.value.blue;
@@ -43,16 +43,17 @@ void Sequence::updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Col
 	}
 }
 
-void Sequence::append(const Keyframe frame) {
+Sequence& Sequence::append(const Keyframe frame) {
 	if (count == capacity) {
 		resize(2 * capacity);
 	}
 	frames[count] = frame;
 	count++;
 	duration += frame.duration;
+	return *this;
 }
 
-void Sequence::insert(uint16_t index, const Keyframe frame) {
+Sequence& Sequence::insert(uint16_t index, const Keyframe frame) {
 	if (index <= count) {
 		if (count == capacity) {
 			resize(2 * capacity);
@@ -65,6 +66,7 @@ void Sequence::insert(uint16_t index, const Keyframe frame) {
 		count++;
 		duration += frame.duration;
 	}
+	return *this;
 }
 
 Keyframe Sequence::get(uint16_t index) {

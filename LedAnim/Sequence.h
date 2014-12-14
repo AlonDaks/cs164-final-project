@@ -23,8 +23,8 @@ public:
 	Sequence();
 	~Sequence();
 
-	void append(const Keyframe frame);
-	void insert(uint16_t index, const Keyframe frame);
+	Sequence& append(const Keyframe frame);
+	Sequence& insert(uint16_t index, const Keyframe frame);
 	Keyframe get(uint16_t index);
 	Keyframe remove(uint16_t index);
 	uint16_t size() const;
