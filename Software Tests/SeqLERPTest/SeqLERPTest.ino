@@ -1,5 +1,11 @@
+#include <AnimFunc.h>
+#include <AnimPlayer.h>
+#include <Array.h>
+#include <Colors.h>
 #include <Led.h>
+#include <LedAnim.h>
 #include <Sequence.h>
+
 
 ///////////////////////////////////
 
@@ -7,49 +13,43 @@ int cPin = 22;  // cathode
 int rPin = 23;  // red pin
 int gPin = 21;  // green pin
 int bPin = 20;  // blue pin
-int brightness = 20;
+int brightness = 10;
+
+///////////////////////////////////
 
 RgbLed rgbLed = RgbLed(brightness, cPin, rPin, gPin, bPin);
+Color currentColor;
 
-void setColor(uint8_t r, uint8_t g, uint8_t b) {
-  analogWrite(cPin, brightness);
-  analogWrite(rPin, r);
-  analogWrite(gPin, g);
-  analogWrite(bPin, b);
-}
-
-Color c;
+// Create Sequence 
 Sequence seq = Sequence();
 
+// Subclass AnimFunc with custom update
+struct LERPTest : public AnimFunc {
+  void update(uint16_t elapsedTime) {
+    Sequence::updateSequence(elapsedTime, seq, currentColor);
+    rgbLed.setColor(currentColor.red, currentColor.green, currentColor.blue);
+  }
+  bool isOver(uint16_t elapsedTime) {
+    return elapsedTime > 10000000;
+  }
+};
+
+LERPTest lt; // Create AnimFunc
+LedAnim anim = LedAnim(lt); // Create anim
+
+AnimPlayer player = AnimPlayer();
+
 void setup() {
-  Color kfc1 = { 255,0,0 };
-  Keyframe kf1 = {
-    100, //duration
-    kfc1, // color
-    0 // NONE transition
-  };
-  Color kfc2 = { 0,255,0 };
-  Keyframe kf2 = {
-    100, //duration
-    kfc2, // color
-    1 // LERP transition
-  };
+  Color kfc1 = RED;
+  Keyframe kf1 = {1000, kfc1, 0 }; // LERP transition
+  Color kfc2 = BLUE;
+  Keyframe kf2 = {500, kfc2, 0 }; // NONE transition
   seq.append(kf1);
   seq.append(kf2);
   
-  pinMode(rPin, OUTPUT);
-  pinMode(gPin, OUTPUT);
-  pinMode(bPin, OUTPUT);
+  uint16_t rec1 = player.play(anim);
 }
 
 void loop() {
-  delay(2000);
-  Sequence::updateSequence(25, seq, c);
-  rgbLed.setColor(c.red, c.green, c.blue);
-  delay(2000);
-  Sequence::updateSequence(150, seq, c);
-  rgbLed.setColor(c.red, c.green, c.blue);
-  delay(2000);
-  Sequence::updateSequence(220, seq, c);
-  rgbLed.setColor(c.red, c.green, c.blue);
+  player.update();
 }
