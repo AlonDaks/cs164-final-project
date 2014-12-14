@@ -127,6 +127,10 @@ void Sequence::print(uint16_t elapsedTime) {
 	}
 }
 
+uint16_t Sequence::getDuration() {
+	return duration;
+}
+
 #undef DEFAULT_SIZE
 #undef MIN_SIZE
 #undef NONE

@@ -30,7 +30,7 @@ struct LERPTest : public AnimFunc {
     rgbLed.setColor(currentColor.red, currentColor.green, currentColor.blue);
   }
   bool isOver(uint16_t elapsedTime) {
-    return elapsedTime > 10000000;
+    return elapsedTime > seq.getDuration() * 2; // Loops over the sequence twice
   }
 };
 
