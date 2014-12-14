@@ -21,5 +21,7 @@ extern Color BLUE;
 extern Color VIOLET;
 extern Color MAGENTA;
 extern Color RASPBERRY;
+extern Color WHITE;
+extern Color OFF;
 
 #endif

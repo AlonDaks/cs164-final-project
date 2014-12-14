@@ -1,11 +1,12 @@
 #include "Sequence.h"
-#include <Arduino.h>
 #include "Led.h"
+#include <Arduino.h>
 
 #define DEFAULT_SIZE 8
 #define MIN_SIZE 4
-#define NONE 0
-#define LERP 1
+
+uint8_t TR_NONE = 0;
+uint8_t TR_LERP = 1;
 
 Keyframe invalid;
 
@@ -23,21 +24,25 @@ Sequence::~Sequence() {
 	free(frames);
 }
 
-void Sequence::updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Color& currentColor) {
-	uint16_t timeRemaining = elapsedTime % seq.duration;
+void Sequence::update(uint32_t elapsedMillis, Sequence& seq, /* out */ Color& currentColor) {
+	uint32_t timeRemaining = elapsedMillis % seq.duration;
 	for (int i = 0; i < seq.count; i++) { // Find correct frame
 		Keyframe curFrame = seq.frames[i];
 		if (timeRemaining < curFrame.duration) {
-			if (curFrame.transition == NONE) {
-				currentColor.red = curFrame.value.red;
-				currentColor.green = curFrame.value.green;
-				currentColor.blue = curFrame.value.blue;
-			} else {	// LERP
+			if (curFrame.transition == TR_LERP) {
 				Keyframe nextFrame = seq.frames[ (i+1) % seq.count ];
 				float interp = (float) timeRemaining / (float) curFrame.duration;
 				currentColor.red = (1-interp) * curFrame.value.red + interp * nextFrame.value.red;
 				currentColor.green = (1-interp) * curFrame.value.green + interp * nextFrame.value.green;
 				currentColor.blue = (1-interp) * curFrame.value.blue + interp * nextFrame.value.blue;
+				/*Serial.print("R: ");
+				Serial.print(currentColor.red);
+				Serial.print(" G: ");
+				Serial.print(currentColor.green);
+				Serial.print(" B: ");
+				Serial.println(currentColor.blue);*/
+			} else {
+				currentColor = curFrame.value;
 			}
 			break;
 		}
@@ -45,9 +50,9 @@ void Sequence::updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Col
 	}
 }
 
-void Sequence::applySequence(uint16_t elapsedTime, Sequence& seq, ILed& led) {
+void Sequence::apply(uint32_t elapsedMillis, Sequence& seq, ILed& led) {
 	Color c;
-	updateSequence(elapsedTime, seq, c);
+	update(elapsedMillis, seq, c);
 	led.setColor(c);
 }
 
@@ -118,8 +123,8 @@ void Sequence::exit(const char* message) const {
     Serial.print("\n");
 }
 
-void Sequence::print(uint16_t elapsedTime) {
-	uint16_t timeRemaining = elapsedTime % duration;
+void Sequence::print(uint32_t elapsedMillis) {
+	uint32_t timeRemaining = elapsedMillis % duration;
 	for (int i = 0; i < count; i++) { // Find correct frame
 		Keyframe frame = frames[i];
 		if (timeRemaining < frame.duration) {
@@ -135,11 +140,9 @@ void Sequence::print(uint16_t elapsedTime) {
 	}
 }
 
-uint16_t Sequence::getDuration() {
+uint32_t Sequence::getDuration() {
 	return duration;
 }
 
 #undef DEFAULT_SIZE
 #undef MIN_SIZE
-#undef NONE
-#undef LERP

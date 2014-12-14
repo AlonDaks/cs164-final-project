@@ -1,8 +1,4 @@
-
-#include <AnimPlayer.h>
-#include <Led.h>
 #include <LedAnim.h>
-#include <Sequence.h>
 #include <Adafruit_WS2801.h>
 #include <SPI.h>
 #include "LedStrip.h"
@@ -15,24 +11,8 @@ LedStrip ledStrip = LedStrip(25, dataPin, clockPin);
 
 ///////////////////////////////////
 
-Color currentColor;
-
-// Create Sequence 
 Sequence seq = Sequence();
-
-// Subclass AnimFunc with custom update
-struct LERPTest : public AnimFunc {
-  void update(uint16_t elapsedTime) {
-    Sequence::applySequence(elapsedTime, seq, ledStrip);
-  }
-  bool isOver(uint16_t elapsedTime) {
-    return elapsedTime > 10000000;
-  }
-};
-
-LERPTest lt; // Create AnimFunc
-LedAnim anim = LedAnim(lt); // Create anim
-
+SeqNode anim = SeqNode(ledStrip, seq, FOREVER); // Create anim
 AnimPlayer player = AnimPlayer();
 
 void setup() {

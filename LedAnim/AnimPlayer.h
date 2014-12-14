@@ -2,20 +2,20 @@
  * Plays LED animations. 
  */
 
-#ifndef LED_ANIM_AnimPlayer_H
-#define LED_ANIM_AnimPlayer_H
+#ifndef LED_ANIM_ANIMPLAYER_H
+#define LED_ANIM_ANIMPLAYER_H
 
 #include <stdint.h>
 
 #define MAX_ANIM 4
 
-class LedAnim;
+class AnimNode;
 
 struct AnimRecord {
 	uint16_t id : 15;
 	uint16_t bIsPlaying : 1;
-	LedAnim* anim;
-	uint16_t elapsedTime;
+	AnimNode* node;
+	uint32_t elapsedMillis;
 };
 
 class AnimPlayer {
@@ -26,7 +26,7 @@ public:
 	void update();
 	
 	/* Plays a particular animation. Returns an animation ID. */
-	uint16_t play(LedAnim& anim);
+	uint16_t play(AnimNode& animNode);
 
 	/* Pauses an animation with the given animation ID if it exists. */
 	void pause(uint16_t id);
@@ -46,16 +46,18 @@ public:
 	/* Stops all animations */
 	void stopAll();
 
-private:
+public:
 	AnimRecord animRecord[MAX_ANIM];
 	bool isUpdating;
 	uint8_t numAnims;
 	unsigned long lastUpdateTime;
 	uint16_t nextId;
 
-private:
 	/* Returns the next animation ID */
 	uint16_t getNextId();
+
+	/* */
+	void incrementRecord(uint8_t index);
 
 	/* Removes the i-th element */
 	void removeRecord(uint8_t index);

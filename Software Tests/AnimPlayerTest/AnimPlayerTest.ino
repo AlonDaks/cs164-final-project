@@ -1,93 +1,76 @@
-#include <Led.h>
 #include <LedAnim.h>
-#include <AnimPlayer.h>
 #include "PushButton.h"
 
 ///////////////////////////////////
-// Hardware:
+// Setup Hardware:
 
-const int cPin1 = 22;  // cathode
+const int aPin1 = 22;  // anode
 const int rPin1 = 23;  // red pin
 const int gPin1 = 21;  // green pin
 const int bPin1 = 20;  // blue pin
 
-const int cPin2 = 4;  // cathode
+const int aPin2 = 4;  // anode
 const int rPin2 = 3;  // red pin
 const int gPin2 = 5;  // green pin
 const int bPin2 = 6;  // blue pin
 
 const int brightness = 10;
 
-RgbLed rgbLed1 = RgbLed(brightness, cPin1, rPin1, gPin1, bPin1);
-RgbLed rgbLed2 = RgbLed(brightness, cPin2, rPin2, gPin2, bPin2);
+RgbLedCA rgbLed1 = RgbLedCA(rPin1, gPin1, bPin1, aPin1, true, brightness);
+RgbLedCA rgbLed2 = RgbLedCA(rPin2, gPin2, bPin2, aPin2, true, brightness);
 
 const int pushButtonPin = 14;  
 
 ///////////////////////////////////
-// AnimFuncs:
+// Define AnimNodes:
 
-uint16_t rgbTime = 1000;
-
-// Sets the color of the LED to red
-struct PlayRed : public AnimFunc {
-  void update(uint16_t elapsedTime) {
+struct PlayRed : public TimeNode {
+  PlayRed(uint32_t dur) : TimeNode(dur) {}
+  void update(uint32_t elapsedMillis) {
     rgbLed1.setColor(RED);
   }
-  bool isOver(uint16_t elapsedTime) { return elapsedTime > rgbTime; }
 };
 
-// Sets the color of the LED to green
-struct PlayGreen : public AnimFunc {
-  void update(uint16_t elapsedTime) {
+struct PlayGreen : public TimeNode {
+  PlayGreen(uint32_t dur) : TimeNode(dur) {}
+  void update(uint32_t elapsedMillis) {
     rgbLed1.setColor(GREEN);
   }
-  bool isOver(uint16_t elapsedTime) { return elapsedTime > rgbTime; }
 };
 
-// Sets the color of the LED to blue
-struct PlayBlue : public AnimFunc {
-  void update(uint16_t elapsedTime) {
+struct PlayBlue : public TimeNode {
+  PlayBlue(uint32_t dur) : TimeNode(dur) {}
+  void update(uint32_t elapsedMillis) {
     rgbLed1.setColor(BLUE);
   }
-  bool isOver(uint16_t elapsedTime) { return elapsedTime > rgbTime; }
 };
 
-///////////////////////////////////
-// AnimFunc set 2
-
-uint16_t bcTime = 1666;
-
-// Sets the color of the LED to green
-struct PlayYellow : public AnimFunc {
-  void update(uint16_t elapsedTime) {
+struct PlayYellow : public TimeNode {
+  PlayYellow(uint32_t dur) : TimeNode(dur) {}
+  void update(uint32_t elapsedMillis) {
     rgbLed2.setColor(YELLOW);
   }
-  bool isOver(uint16_t elapsedTime) { return elapsedTime > bcTime; }
 };
 
-// Sets the color of the LED to blue
-struct PlayCyan : public AnimFunc {
-  void update(uint16_t elapsedTime) {
+struct PlayCyan : public TimeNode {
+  PlayCyan(uint32_t dur) : TimeNode(dur) {}
+  void update(uint32_t elapsedMillis) {
     rgbLed2.setColor(CYAN);
   }
-  bool isOver(uint16_t elapsedTime) { return elapsedTime > bcTime; }
 };
 
 ///////////////////////////////////
+// Instantiate:
 
-PlayRed pr;
-PlayGreen pg;
-PlayBlue pb;
+const uint16_t rgbTime = 1000;
+const uint16_t ycTime = 1666;
 
-LedAnim redAnim = LedAnim(pr);
-LedAnim greenAnim = LedAnim(pg);
-LedAnim blueAnim = LedAnim(pb);
+PlayRed redAnim = PlayRed(rgbTime);
+PlayGreen greenAnim = PlayGreen(rgbTime);
+PlayBlue blueAnim = PlayBlue(rgbTime);
 
-PlayYellow py;
-PlayCyan pc;
-
-LedAnim yellowAnim = LedAnim(py);
-LedAnim cyanAnim = LedAnim(pc);
+PlayYellow yellowAnim = PlayYellow(ycTime);
+PlayCyan cyanAnim = PlayCyan(ycTime);
 
 AnimPlayer player = AnimPlayer();
 
@@ -97,21 +80,16 @@ int rgbAnimId;
 int ycAnimId;
 
 void setup() {
-  Serial.println("Setting up animations");
-  redAnim.setNext(greenAnim);
-  greenAnim.setNext(blueAnim);
-  blueAnim.setNext(redAnim);
+  redAnim.next(greenAnim).next(blueAnim).next(redAnim);
+  yellowAnim.next(cyanAnim).next(yellowAnim);
   
-  yellowAnim.setNext(cyanAnim);
-  cyanAnim.setNext(yellowAnim);
-  Serial.println("Finished setting up animations");
   rgbAnimId = player.play(redAnim);
   ycAnimId = player.play(yellowAnim);
 }
 
 int test = 1;
 
-void doTest() {  
+void doTest() {
 }
 
 void loop() {

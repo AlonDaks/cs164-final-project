@@ -1,38 +1,18 @@
-
-#include <AnimPlayer.h>
-#include <Led.h>
 #include <LedAnim.h>
-#include <Sequence.h>
 #include <Adafruit_WS2801.h>
 #include <SPI.h>
 #include "LedStrip.h"
 
 ///////////////////////////////////
-//  Hardware:
 
 const int dataPin = 16;    //yellow
 const int clockPin = 15;   //green
 LedStrip ledStrip = LedStrip(25, dataPin, clockPin);
 
 ///////////////////////////////////
-// Sequence:
 
 Sequence seq = Sequence();
-
-struct LERPTest : public AnimFunc {
-  Color currentColor;
-  void update(uint16_t elapsedTime) {
-    Sequence::updateSequence(elapsedTime, seq, currentColor);
-    ledStrip.setColor(currentColor.red, currentColor.green, currentColor.blue);
-  }
-  bool isOver(uint16_t elapsedTime) {
-    return elapsedTime > 10000000;
-  }
-};
-
-LERPTest lt; // Create AnimFunc
-LedAnim anim = LedAnim(lt); // Create anim
-
+SeqNode anim = SeqNode(ledStrip, seq, FOREVER); // Create anim
 AnimPlayer player = AnimPlayer();
 
 void setup() {

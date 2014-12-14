@@ -1,22 +1,20 @@
 #include "AnimPlayer.h"
-#include "Color.h"
 #include "Led.h"
-#include "LedAnim.h"
+#include "AnimNode.h"
 #include "Arduino.h"
 
 // 2^15 because IDs are 15 bits long
 #define MAX_ID_SIZE 32768	
 
-AnimPlayer::AnimPlayer()
-  : isUpdating(true), numAnims(0), nextId(0)
-{
-  lastUpdateTime = millis();
+AnimPlayer::AnimPlayer() 
+: isUpdating(true), numAnims(0), nextId(0) {
+	lastUpdateTime = millis();
 }
 
 void AnimPlayer::update() {
 	// Caclulate delta time since last update()
 	unsigned long curTime = millis();
-	uint16_t deltaTime = curTime - lastUpdateTime;
+	uint32_t deltaTime = curTime - lastUpdateTime;
 	lastUpdateTime = curTime;
 
 	if (!isUpdating) return;
@@ -29,15 +27,15 @@ void AnimPlayer::update() {
 		}
 
 		// Calculate elapsed time since the last update to this record
-		uint16_t elapsedTime = curRecord.elapsedTime + deltaTime;
-		LedAnim* curAnim = curRecord.anim;
+		uint32_t elapsedMillis = curRecord.elapsedMillis + deltaTime;
+		AnimNode* curAnim = curRecord.node;
 
-		// If the LedAnim is over, move to the next LedAnim
-		if (curAnim->func.isOver(elapsedTime)) {
-			LedAnim* next = curAnim->next;
+		// If the AnimNode is over, move to the next AnimNode
+		if (curAnim->isOver(elapsedMillis)) {
+			AnimNode* next = curAnim->next();
 			if (next) {
-				curRecord.anim = next;
-				elapsedTime = 0;
+				curRecord.node = next;
+				elapsedMillis = 0;
 				curAnim = next;
 			} else {
 				removeRecord(i);
@@ -45,18 +43,18 @@ void AnimPlayer::update() {
 		}
 
 		// Call the update() function of the active LedAnim
-		curAnim->func.update(elapsedTime);
-		curRecord.elapsedTime = elapsedTime;
+		curAnim->update(elapsedMillis);
+		curRecord.elapsedMillis = elapsedMillis;
 	}
 }
 
-uint16_t AnimPlayer::play(LedAnim& anim) {
+uint16_t AnimPlayer::play(AnimNode& animNode) {
 	if (numAnims < MAX_ANIM) {
 		AnimRecord& newRecord = animRecord[numAnims];
 		newRecord.id = getNextId();
 		newRecord.bIsPlaying = true;
-		newRecord.anim = &anim;
-		newRecord.elapsedTime = 0;
+		newRecord.node = &animNode;
+		newRecord.elapsedMillis = 0;
 		numAnims++;
 		return newRecord.id;
 	} else {
@@ -101,8 +99,9 @@ void AnimPlayer::stopAll() {
 }
 
 uint16_t AnimPlayer::getNextId() {
-	uint16_t next = nextId;
+	uint16_t val = nextId;
 	nextId = (nextId + 1) % MAX_ID_SIZE;
+	return val;
 }
 
 void AnimPlayer::removeRecord(uint8_t index) {
