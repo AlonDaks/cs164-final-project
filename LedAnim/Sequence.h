@@ -28,6 +28,7 @@ public:
 	Keyframe get(uint16_t index);
 	Keyframe remove(uint16_t index);
 	uint16_t size() const;
+	void print(uint16_t elapsedTime);
 
 private:
 	Keyframe* frames;

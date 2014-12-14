@@ -4,6 +4,8 @@
 
 #define DEFAULT_SIZE 8
 #define MIN_SIZE 4
+#define NONE 0
+#define LERP 1
 
 Sequence::Sequence() {
 	frames = (Keyframe *) malloc(sizeof(Keyframe) * DEFAULT_SIZE);
@@ -22,14 +24,22 @@ Sequence::~Sequence() {
 void Sequence::updateSequence(uint16_t elapsedTime, Sequence& seq, /* out */ Color& currentColor) {
 	uint16_t timeRemaining = elapsedTime % seq.duration;
 	for (int i = 0; i < seq.count; i++) { // Find correct frame
-		Keyframe frame = seq.frames[i];
-		if (timeRemaining < frame.duration) {
-			currentColor.red = frame.value.red;
-			currentColor.green = frame.value.green;
-			currentColor.blue = frame.value.blue;
+		Keyframe curFrame = seq.frames[i];
+		if (timeRemaining < curFrame.duration) {
+			if (curFrame.transition == NONE) {
+				currentColor.red = curFrame.value.red;
+				currentColor.green = curFrame.value.green;
+				currentColor.blue = curFrame.value.blue;
+			} else {	// LERP
+				Keyframe nextFrame = seq.frames[ (i+1) % seq.count ];
+				float interp = (float) elapsedTime / (float) curFrame.duration;
+				currentColor.red = (1-interp) * curFrame.value.red + interp * nextFrame.value.red;
+				currentColor.green = (1-interp) * curFrame.value.green + interp * nextFrame.value.green;
+				currentColor.blue = (1-interp) * curFrame.value.blue + interp * nextFrame.value.blue;
+			}
 			break;
 		}
-		timeRemaining -= frame.duration;
+		timeRemaining -= curFrame.duration;
 	}
 }
 
@@ -98,5 +108,24 @@ void Sequence::exit(const char* message) const {
     Serial.print("\n");
 }
 
+void Sequence::print(uint16_t elapsedTime) {
+	uint16_t timeRemaining = elapsedTime % duration;
+	for (int i = 0; i < count; i++) { // Find correct frame
+		Keyframe frame = frames[i];
+		if (timeRemaining < frame.duration) {
+			Serial.print(frame.value.red);
+			Serial.print("\n");
+			Serial.print(frame.value.green);
+			Serial.print("\n");
+			Serial.print(frame.value.blue);
+			Serial.print("\n");
+			break;
+		}
+		timeRemaining -= frame.duration;
+	}
+}
+
 #undef DEFAULT_SIZE
 #undef MIN_SIZE
+#undef NONE
+#undef LERP
