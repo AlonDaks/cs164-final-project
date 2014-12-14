@@ -1,11 +1,7 @@
-#include <AnimFunc.h>
 #include <AnimPlayer.h>
-#include <Array.h>
-#include <Colors.h>
 #include <Led.h>
 #include <LedAnim.h>
 #include <Sequence.h>
-
 
 ///////////////////////////////////
 
@@ -29,7 +25,7 @@ struct LERPTest : public AnimFunc {
     Sequence::applySequence(elapsedTime, seq, rgbLed);
   }
   bool isOver(uint16_t elapsedTime) {
-    return elapsedTime > seq.getDuration() * 2; // Loops over the sequence twice
+    return elapsedTime > seq.getDuration() * 10; // Loops over the sequence twice
   }
 };
 

@@ -1,10 +1,13 @@
 #include "Sequence.h"
 #include <Arduino.h>
+#include "Led.h"
 
 #define DEFAULT_SIZE 8
 #define MIN_SIZE 4
 #define NONE 0
 #define LERP 1
+
+Keyframe invalid;
 
 Sequence::Sequence() {
 	frames = (Keyframe *) malloc(sizeof(Keyframe) * DEFAULT_SIZE);
@@ -78,7 +81,7 @@ Keyframe Sequence::get(uint16_t index) {
 	if (index < count) {
         return frames[index];
     } else {
-        //return nullptr;
+        return invalid;
     }
 }
 
@@ -93,7 +96,7 @@ Keyframe Sequence::remove(uint16_t index) {
         duration -= frame.duration;
         return frame;
     } else {
-        //return nullptr;
+        return invalid;
     }
 }
 

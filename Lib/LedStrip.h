@@ -5,7 +5,6 @@
 #include <Adafruit_WS2801.h>
 #include <SPI.h>
 #include <Led.h>
-#include <HashMap.h>
 
 class LedStrip : public ILed {
 public:

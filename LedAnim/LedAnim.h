@@ -15,9 +15,6 @@ struct AnimFunc {
 	virtual void update(uint16_t elapsedTime) = 0;
 };
 
-/* Defines type of LedAnim */
-//enum AnimType { ANIM_FUNC, ANIM_SEQ };
-
 /* Base class for animations, which are linked lists that point to other animations. */
 class LedAnim {
 friend class AnimPlayer;

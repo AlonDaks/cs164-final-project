@@ -1,7 +1,5 @@
 
-#include <AnimFunc.h>
 #include <AnimPlayer.h>
-#include <Colors.h>
 #include <Led.h>
 #include <LedAnim.h>
 #include <Sequence.h>

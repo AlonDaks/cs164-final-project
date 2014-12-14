@@ -1,4 +1,5 @@
 #include "AnimPlayer.h"
+#include "Color.h"
 #include "Led.h"
 #include "LedAnim.h"
 #include "Arduino.h"

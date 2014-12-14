@@ -3,7 +3,9 @@
 
 #include "stdint.h"
 #include "Array.h"
-#include "Led.h"
+#include "Color.h"
+
+class ILed;
 
 struct Keyframe {
 	uint16_t duration;

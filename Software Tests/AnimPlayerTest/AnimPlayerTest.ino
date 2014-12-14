@@ -1,4 +1,3 @@
-#include <Color.h>
 #include <Led.h>
 #include <LedAnim.h>
 #include <AnimPlayer.h>
