@@ -7,10 +7,9 @@
 
 #include <stdint.h>
 
-class AnimFunc {
-public:
-	/* Returns the duration of this animation in milliseconds */
-	virtual uint16_t durationInMillis() = 0;
+struct AnimFunc {
+	/* Returns whether this animation is over */
+	virtual bool isOver(uint16_t elapsedTime) = 0;
 
 	/* Called each tick to update the LEDs */
 	virtual void update(uint16_t elapsedTime) = 0;

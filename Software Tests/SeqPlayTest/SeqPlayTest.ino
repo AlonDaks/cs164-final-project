@@ -1,24 +1,23 @@
 #include <LedAnim.h>
-#include <Sequence.h>
+#include <AnimPlayer.h>
 int test = 1;
 
 ///////////////////////////////////
+// AnimFuncs:
 
-class DoNothingFunc : public AnimFunc {
+/* Plays green colors */
+struct GreenFunc : public AnimFunc {
   void update(uint16_t elapsedTime) {
     // do nothing 
   }
-  uint16_t durationInMillis() { return 10; }
+  bool isOver(uint16_t elapsedTime) { return elapsedTime > 1000; }
 };
 
 ///////////////////////////////////
 
-DoNothingFunc f = DoNothingFunc();
-
-SeqAnim sq1 = SeqAnim();
-SeqAnim sq2 = SeqAnim();
-FnAnim fnA1 = FnAnim(f);
-FnAnim fnA2 = FnAnim(f);
+DoNothingFunc f;
+LedAnim a1 = LedAnim(f);
+LedAnim a2 = LedAnim(f);
 
 Color c;
 Sequence seq = Sequence();
@@ -29,7 +28,8 @@ void doTest() {
 }
 
 void setup() {
-  sq2.setNext(sq2);
+  a1.setNext(a2);
+  a2.setNext(a2);
 }
 
 void loop() {

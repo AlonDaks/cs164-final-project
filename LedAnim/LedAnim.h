@@ -8,14 +8,13 @@
 #include "AnimFunc.h"
 
 /* Defines type of LedAnim */
-enum AnimType { ANIM_FUNC, ANIM_SEQ };
+//enum AnimType { ANIM_FUNC, ANIM_SEQ };
 
 /* Base class for animations, which are linked lists that point to other animations. */
 class LedAnim {
-friend class SequencePlayer;
+friend class AnimPlayer;
 public:
-	/* Returns the duration of this animation. */
-	virtual uint16_t getDuration() = 0;
+	LedAnim(AnimFunc& f);
 
 	/* Sets the animation that should be played after this animation. */
 	void setNext(LedAnim& ledAnim);
@@ -23,28 +22,28 @@ public:
 	/* Removes links to any animations that play after this */
 	void clearNext();
 protected:
-	LedAnim() : next(nullptr) {}
-	AnimType type;
+	//AnimType type;
 	LedAnim* next;
+	AnimFunc& func;
 };
 
 /* An animation driven by an update function */
-class FnAnim : public LedAnim {
+/*class FnAnim : public LedAnim {
 public:
 	FnAnim(AnimFunc& d);
 	uint16_t getDuration() override;
 protected:
 	AnimFunc& delegate;
-};
+};*/
 
 /* An animation driven by a sequence of interpolatable values. */
-class SeqAnim : public LedAnim {
+/*class SeqAnim : public LedAnim {
 public:
 	SeqAnim();
 	uint16_t getDuration() override;
 protected:
 	uint16_t duration;
 	// TODO add reference to sequence
-};
+};*/
 
 #endif
