@@ -5,12 +5,14 @@
 #include <Adafruit_WS2801.h>
 #include <SPI.h>
 #include <Led.h>
+#include <HashMap.h>
 
 class LedStrip : public ILed {
 public:
 	LedStrip(uint8_t numLeds, uint8_t dataPin, uint8_t clockPin);
 	void begin();
 	void setColor(uint8_t r, uint8_t g, uint8_t b) override;
+	void setColor(uint8_t addr, uint8_t r, uint8_t g, uint8_t b);
 private:
 	uint8_t clockPin;
 	uint8_t dataPin;
@@ -35,6 +37,11 @@ void LedStrip::setColor(uint8_t r, uint8_t g, uint8_t b) {
 	for (int i = 0; i < strip.numPixels(); ++i) {
 		strip.setPixelColor(i, createColor(r, g, b));
 	}
+	strip.show();
+}
+
+void LedStrip::setColor(uint8_t addr, uint8_t r, uint8_t g, uint8_t b) {
+	strip.setPixelColor(addr, createColor(r, g, b));
 	strip.show();
 }
 
