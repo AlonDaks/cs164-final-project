@@ -2,6 +2,8 @@
  * ButtonTest - modification of Button tutorial
  */
 
+#include "PushButton.h"
+
 // constants won't change. They're used here to 
 // set pin numbers:
 const int buttonPin = 14;     // the number of the pushbutton pin
@@ -15,6 +17,8 @@ void setup() {
 }
 
 void loop(){
+  Serial.println(digitalRead(buttonPin));
+  delay(1000);
   pb.update();
 
   if (pb.isPressed()) {       
