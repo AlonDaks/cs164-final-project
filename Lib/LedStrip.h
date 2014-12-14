@@ -2,9 +2,9 @@
 #ifndef LEDSTRIP_H
 #define LEDSTRIP_H
 
-#include "Led.h"
-#include "Adafruit_WS2801.h"
-#include "SPI.h"
+#include <Adafruit_WS2801.h>
+#include <SPI.h>
+#include <Led.h>
 
 class LedStrip : public ILed {
 public:
@@ -32,7 +32,7 @@ void LedStrip::begin() {
 }
 
 void LedStrip::setColor(uint8_t r, uint8_t g, uint8_t b) {
-	for (int i = 0; i < strip.numPixels; ++i) {
+	for (int i = 0; i < strip.numPixels(); ++i) {
 		strip.setPixelColor(i, createColor(r, g, b));
 	}
 	strip.show();
