@@ -12,14 +12,17 @@ AnimPlayer player = AnimPlayer();
 
 ///////////////////////////////////
 
+unsigned int delayFunc(int index) {
+  return 100*index;
+}
 Sequence seq = Sequence();
 SeqNode anim = SeqNode(ledStrip, seq, FOREVER); // Create anim
+//DelayNode anim = DelayNode(ledStrip.getLights(), seq, delayFunc, FOREVER);
 
 void setup() {
-  seq.append(seconds(1), OCEAN, TR_LERP)
-     .append(seconds(1), YELLOW, TR_LERP)
-     .append(seconds(1), Color(3, 125, 223), TR_LERP)
-     .append(seconds(1), MAGENTA, TR_LERP);
+  seq.append(seconds(1), RED, TR_LERP)
+     .append(seconds(1), GREEN, TR_LERP)
+     .append(seconds(1), BLUE, TR_LERP);
   /*
   // colorAt() tests
   seq.append(RED, TR_NONE, 2000);
@@ -28,7 +31,6 @@ void setup() {
   seq.colorAt(2000, BLUE, TR_NONE, 500);
   seq.colorAt(3000, WHITE, TR_NONE, 1000);
   */
-  ledStrip.begin();
   uint16_t rec1 = player.play(anim);
 }
 
@@ -36,6 +38,7 @@ int test = 1;
 
 void doTest() {
   seq.print();
+ // Serial.println(anim.totalDuration());
 }
 
 void loop() {
