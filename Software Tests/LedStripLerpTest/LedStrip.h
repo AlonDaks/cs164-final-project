@@ -8,7 +8,7 @@
 
 class LedStrip : public ILed {
 public:
-	LedStrip(uint8_t numLeds, uint8_t dataPin, uint8_t clockPin);
+	LedStrip(uint8_t numLeds, uint8_t dataPin, uint8_t clockPin, uint8_t brightness);
 	void begin();
 	void setColor(Color &color) override;
 	void setColor(uint8_t addr, Color &color);
@@ -16,13 +16,14 @@ private:
 	uint8_t clockPin;
 	uint8_t dataPin;
 	uint8_t numLeds;
+	uint8_t brightness;
 	Adafruit_WS2801 strip;
 
 	uint32_t createColor(Color &color);
 };
 
-LedStrip::LedStrip(uint8_t numLeds, uint8_t dataPin, uint8_t clockPin)
-	: clockPin(clockPin), dataPin(dataPin), numLeds(numLeds) 
+LedStrip::LedStrip(uint8_t numLeds, uint8_t dataPin, uint8_t clockPin, uint8_t brightness)
+	: clockPin(clockPin), dataPin(dataPin), numLeds(numLeds), brightness(brightness) 
 {
 	strip = Adafruit_WS2801(numLeds, dataPin, clockPin);
 }
@@ -46,11 +47,11 @@ void LedStrip::setColor(uint8_t addr, Color &color) {
 
 uint32_t LedStrip::createColor(Color &color) {
 	uint32_t c;
-	c = color.red;
+	c = (((uint16_t) color.red * brightness) / 255) & 0xFF;
 	c <<= 8;
-	c |= color.green;
+	c |= (((uint16_t) color.green * brightness) / 255) & 0xFF;
 	c <<= 8;
-	c |= color.blue;
+	c |= (((uint16_t) color.blue * brightness) / 255) & 0xFF;
 	return c;
 }
 

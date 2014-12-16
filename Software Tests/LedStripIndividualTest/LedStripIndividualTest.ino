@@ -5,9 +5,9 @@
 
 ///////////////////////////////////
 
-const int dataPin = 16;    //yellow
-const int clockPin = 15;   //green
-LedStrip ledStrip = LedStrip(25, dataPin, clockPin);
+const int dataPin = 15;    //yellow
+const int clockPin = 16;   //green
+LedStrip ledStrip = LedStrip(25, dataPin, clockPin, 10);
 
 ///////////////////////////////////
 
