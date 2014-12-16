@@ -48,7 +48,6 @@ protected:
 struct RepNode : public AnimNode {
 	virtual bool isRepOver(uint32_t elapsedMillis) = 0;
 	virtual bool isOver(uint32_t elapsedMillis) override;
-	virtual AnimNode* next() override;
 protected:
 	RepNode(uint32_t numRepeats);
 	uint32_t numRepeats;
@@ -81,16 +80,25 @@ protected:
 
 /* AnimNode that plays a particular sequence on an array of LEDs, each offset by some amount. */
 struct DelayNode : public RepNode {
-	DelayNode(Array<ILed*>& leds, Sequence& seq, uint32_t (*offsetFunc) (uint16_t));
-	DelayNode(Array<ILed*>& leds, Sequence& seq, uint32_t (*offsetFunc) (uint16_t), uint32_t numRepeats);
+	DelayNode(Array<ILed*>& leds, Sequence& seq, unsigned int (*offsetFunc) (int));
+	DelayNode(Array<ILed*>& leds, Sequence& seq, unsigned int (*offsetFunc) (int), uint32_t numRepeats);
 	~DelayNode();
 	virtual void update(uint32_t elapsedMillis) override;
 	virtual bool isRepOver(uint32_t elapsedMillis) override;
+	uint32_t totalDuration();
 protected:
 	Array<ILed*>& leds;
 	Sequence& sequence;
 	uint32_t maxOffset;
 	uint32_t* offsets;
 };
+
+/* An AnimNode that plays multiple */
+/*struct MultiNode : public AnimNode {
+	MultiNode(Array<AnimNode*>& nodes);
+	virtual void update(uint32_t elapsedMillis) override;
+protected:
+	Array<AnimNode*>& animNodes;
+};*/
 
 #endif

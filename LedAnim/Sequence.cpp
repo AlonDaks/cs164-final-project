@@ -32,12 +32,12 @@ void Sequence::update(uint32_t elapsedMillis, const Sequence& seq, /* out */ Col
 				currentColor.red = (1-interp) * curFrame.value.red + interp * nextFrame.value.red;
 				currentColor.green = (1-interp) * curFrame.value.green + interp * nextFrame.value.green;
 				currentColor.blue = (1-interp) * curFrame.value.blue + interp * nextFrame.value.blue;
-				/*if (timeRemaining == 2000) {
+				if (timeRemaining == 2000) {
 					Serial.print("Time = 2000ms"); Serial.print(" {R: ");
 					Serial.print(currentColor.red); Serial.print(" G: ");
 					Serial.print(currentColor.green); Serial.print(" B: ");
 					Serial.print(currentColor.blue); Serial.println("} ");
-				}*/
+				}
 			} else {
 				currentColor = curFrame.value;
 			}

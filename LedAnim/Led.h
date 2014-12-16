@@ -7,13 +7,13 @@
 
 #include "stdint.h"
 #include "Color.h"
+#include "Arduino.h"
 
 /* Interface for LEDs */
 class ILed {
 public:
     virtual void setColor(const Color& color) = 0;
-protected:
-	~ILed() {}
+	virtual ~ILed() {};
 };
 
 /* Defines a single-color LED. Intensity is only specified through the red channel. */

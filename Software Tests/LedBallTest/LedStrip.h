@@ -33,6 +33,7 @@ public:
 	void setColor(const Color &color) override;
 	void setColor(uint8_t addr, const Color &color);
 	void setColor(const int* arr, size_t n, const Color &color);
+	uint16_t size();
 
 	Array<ILed*>& getLights();
 
@@ -69,6 +70,10 @@ LedStrip::LedStrip(uint8_t numLeds, uint8_t dataPin, uint8_t clockPin, uint8_t b
 
 LedStrip::~LedStrip() {
 	delete[] ls;
+}
+
+uint16_t LedStrip::LedStrip::size() {
+	return strip.numPixels();
 }
 
 void LedStrip::selfTest() {

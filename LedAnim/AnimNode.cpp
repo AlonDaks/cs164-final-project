@@ -42,18 +42,13 @@ RepNode::RepNode(uint32_t numRepeats)
 bool RepNode::isOver(uint32_t elapsedMillis) {
 	if (isRepOver(elapsedMillis)) {
 		curRepeats++;
-		return true;
-	} else {
-		return false;
 	}
-}
-
-AnimNode* RepNode::next() {
 	if (numRepeats == FOREVER || curRepeats <= numRepeats) {
-		return this;
+		return false;
 	} else {
-		return nextNode;
+		return true;
 	}
+
 }
 
 /******************************
@@ -121,10 +116,10 @@ bool BlendNode::isRepOver(uint32_t elapsedMillis) {
  * DelayNode functions 
  ******************************/
 
-DelayNode::DelayNode(Array<ILed*>& leds, Sequence& seq, uint32_t (*offsetFunc) (uint16_t))
+DelayNode::DelayNode(Array<ILed*>& leds, Sequence& seq, unsigned int (*offsetFunc) (int))
 : DelayNode(leds, seq, offsetFunc, numRepeats) {}
 
-DelayNode::DelayNode(Array<ILed*>& leds, Sequence& seq, uint32_t (*offsetFunc) (uint16_t), uint32_t numRepeats) 
+DelayNode::DelayNode(Array<ILed*>& leds, Sequence& seq, unsigned int (*offsetFunc) (int), uint32_t numRepeats) 
 : RepNode(numRepeats), leds(leds), sequence(seq), maxOffset(0) {
 	offsets = (uint32_t*) malloc(sizeof(uint32_t) * leds.size());
 	for(int i = 0; i < leds.size(); i++) {
@@ -141,14 +136,43 @@ DelayNode::~DelayNode() {
 }
 
 void DelayNode::update(uint32_t elapsedMillis) {
+	if (elapsedMillis > 2000 == 0) {
+		Serial.print("At time=");
+		Serial.println(elapsedMillis);
+	}
 	for(int i = 0; i < leds.size(); i++){
 		uint32_t offset = offsets[i];
 		if(elapsedMillis > offset){
+			//if (elapsedMillis % 1000 == 0) {
+			//	Serial.print("Index: ");
+		//		Serial.print(i);
+	//			Serial.print(" time: ");
+	//			Serial.print(elapsedMillis - offset);
+	//			Serial.println(" ");
+			//}
 			Sequence::apply(elapsedMillis - offset, sequence, *leds.get(i));
 		}
 	}
 }
 
 bool DelayNode::isRepOver(uint32_t elapsedMillis) {
-	return sequence.getDuration() + maxOffset > elapsedMillis;
+	bool val = (sequence.getDuration() + maxOffset) < elapsedMillis;
+	//Serial.print("repOVer");
+	//Serial.println(val);
+	return val;
 }
+
+uint32_t DelayNode::totalDuration() {
+	return sequence.getDuration() + maxOffset;
+}
+
+/******************************
+ * MultiNode functions 
+ ******************************/
+
+/*MultiNode::MultiNode(Array<AnimNode*>& nodes) {
+
+}
+void update(uint32_t elapsedMillis) {
+
+}*/

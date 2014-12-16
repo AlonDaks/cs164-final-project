@@ -32,6 +32,7 @@ void AnimPlayer::update() {
 
 		// If the AnimNode is over, move to the next AnimNode
 		if (curAnim->isOver(elapsedMillis)) {
+			Serial.println("hi");
 			AnimNode* next = curAnim->next();
 			if (next) {
 				curRecord.node = next;
