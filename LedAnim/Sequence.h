@@ -26,6 +26,9 @@ public:
 	~Sequence();
 
 	Sequence& append(const Keyframe frame);
+	Sequence& append(Color& color, uint8_t transition, uint32_t duration);
+	Sequence& insertAt(uint32_t offset, Color& color, uint8_t transition);
+	Sequence& insertAt(uint32_t offset, Color& color, uint8_t transition, uint32_t duration);
 	Sequence& insert(uint16_t index, const Keyframe frame);
 	Keyframe get(uint16_t index);
 	Keyframe remove(uint16_t index);

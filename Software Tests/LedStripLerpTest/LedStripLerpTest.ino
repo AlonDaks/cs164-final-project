@@ -16,16 +16,34 @@ SeqNode anim = SeqNode(ledStrip, seq, FOREVER); // Create anim
 AnimPlayer player = AnimPlayer();
 
 void setup() {
-  Keyframe kf1 = {1000, OCEAN, true };
-  Keyframe kf2 = {1000, YELLOW, true };
-  Keyframe kf3 = {1000, RED, true }; 
-  Keyframe kf4 = {1000, MAGENTA, true };
-  seq.append(kf1).append(kf2).append(kf3).append(kf4);
-  
+  /*seq.append(OCEAN, TR_LERP, 1000)
+     .append(YELLOW, TR_LERP, 1000)
+     .append(RED, TR_LERP, 1000)
+     .append(MAGENTA, TR_LERP, 1000);*/
+  /*
+  // colorAt() tests
+  seq.append(RED, TR_NONE, 2000);
+  seq.colorAt(1000, GREEN, TR_NONE, 1000);
+  seq.append(RED, TR_NONE, 1000);
+  seq.colorAt(2000, BLUE, TR_NONE, 500);
+  seq.colorAt(3000, WHITE, TR_NONE, 1000);
+  */
   ledStrip.begin();
   uint16_t rec1 = player.play(anim);
 }
 
+int test = 1;
+
+void doTest() {
+  seq.print();
+}
+
 void loop() {
+  if (test) {
+    delay(2000);
+    doTest();
+    test = 0;
+  }
+  
   player.update();
 }

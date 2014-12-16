@@ -27,10 +27,10 @@ Sequence::~Sequence() {
 void Sequence::update(uint32_t elapsedMillis, Sequence& seq, /* out */ Color& currentColor) {
 	uint32_t timeRemaining = elapsedMillis % seq.duration;
 	for (int i = 0; i < seq.count; i++) { // Find correct frame
-		Keyframe curFrame = seq.frames[i];
+		Keyframe& curFrame = seq.frames[i];
 		if (timeRemaining < curFrame.duration) {
 			if (curFrame.transition == TR_LERP) {
-				Keyframe nextFrame = seq.frames[ (i+1) % seq.count ];
+				Keyframe& nextFrame = seq.frames[ (i+1) % seq.count ];
 				float interp = (float) timeRemaining / (float) curFrame.duration;
 				currentColor.red = (1-interp) * curFrame.value.red + interp * nextFrame.value.red;
 				currentColor.green = (1-interp) * curFrame.value.green + interp * nextFrame.value.green;
@@ -63,6 +63,30 @@ Sequence& Sequence::append(const Keyframe frame) {
 	frames[count] = frame;
 	count++;
 	duration += frame.duration;
+	return *this;
+}
+
+Sequence& Sequence::append(Color& color, uint8_t transition, uint32_t duration) {
+	Keyframe frame = {duration, color, transition};
+	append(frame);
+	return *this;
+}
+
+Sequence& Sequence::insertAt(uint32_t offset, Color& color, uint8_t transition) {
+	return insertAt(offset, color, transition, 0);
+}
+
+Sequence& Sequence::insertAt(uint32_t offset, Color& color, uint8_t transition, uint32_t duration) {
+	Keyframe frame = {duration, color, transition};
+	for (int i = 0; i < seq.count; i++) {
+		Keyframe& curFrame = seq.frames[i];
+		if (offset == 0) {
+			seq.frames[i] = frame;			// replace frame
+		} else if (offset < curFrame.duration) {
+			curFrame.duration = offset;		// insert in the middle, shifting any back if needed
+			insert(i + 1, frame);
+		}
+	}
 	return *this;
 }
 
