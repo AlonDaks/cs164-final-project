@@ -54,3 +54,31 @@ bool SeqNode::isOver(uint32_t elapsedMillis) {
 		return curRepeats > numRepeats; 
 	}
 }
+
+/******************************
+ * OffsetNode functions 
+ ******************************/
+
+OffsetNode::OffsetNode(ILedArray leds, Sequence& seq, uint32_t (*offsetFunc) (uint16_t)) 
+	: leds(leds), sequence(seq), offsetFunc(offsetFunc) { 
+		maxOffset = 0;
+		for(int i = 0; i < leds.size(); i++){
+			uint32_t currOffset = offsetFunc(i);
+			if(currOffset > maxOffset) {
+				maxOffset = currOffset;
+			}
+		}
+	}
+
+
+void OffsetNode::update(uint32_t elapsedMillis) {
+	for(int i = 0; i < leds.size(); i++){
+		if(elapsedMillis > offsetFunc(i)){
+			Sequence::apply(elapsedMillis, sequence, leds.get(i));
+		}
+	}
+}
+
+bool OffsetNode::isOver(uint32_t elapsedMillis) {
+	return sequence.getDuration() + maxOffset > elapsedMillis;
+}
