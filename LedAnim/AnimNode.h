@@ -6,6 +6,7 @@
 #define LED_ANIM_ANIMNODE_H
 
 #include <stdint.h>
+ #include <ILedArray.h>
 
 extern uint32_t FOREVER;
 
@@ -53,6 +54,18 @@ protected:
 	Sequence& sequence;
 	uint32_t numRepeats;
 	uint32_t curRepeats;
+};
+
+/* AnimNode that executes the sequence after offset amount of time. */
+struct OffsetNode : public AnimNode {
+	OffsetNode(ILedArray leds, Sequence& seq, uint32_t (*offsetFunc) (uint16_t));
+	virtual void update(uint32_t elapsedMillis) override;
+	virtual bool isOver(uint32_t elapsedMillis) override;
+protected:
+	ILedArray leds;
+	Sequence& sequence;
+	uint32_t (*offsetFunc) (uint16_t);
+	uint32_t maxOffset;
 };
 
 #endif
