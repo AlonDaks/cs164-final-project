@@ -39,6 +39,8 @@ void AnimPlayer::update() {
 				curAnim = next;
 			} else {
 				removeRecord(i);
+				--i;
+				break;
 			}
 		}
 

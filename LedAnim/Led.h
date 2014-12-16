@@ -11,7 +11,7 @@
 /* Interface for LEDs */
 class ILed {
 public:
-    virtual void setColor(Color& color) = 0;
+    virtual void setColor(const Color& color) = 0;
 protected:
 	~ILed() {}
 };
@@ -25,7 +25,7 @@ public:
 	/* Digital or analog write */
 	SimpleLed(uint8_t pin, bool isAnalog);
 
-	virtual void setColor(Color& color) override;
+	virtual void setColor(const Color& color) override;
 protected:
 	uint8_t pin : 6;
 	uint8_t bIsAnalog : 1;
@@ -40,7 +40,7 @@ public:
 
 	RgbLedCA(uint8_t rPin, uint8_t gPin, uint8_t bPin, uint8_t anodePin, bool isAnalog, uint8_t brightness);
 
-	virtual void setColor(Color& color) override;
+	virtual void setColor(const Color& color) override;
 protected:
 	uint32_t redPin : 6;
 	uint32_t greenPin : 6;

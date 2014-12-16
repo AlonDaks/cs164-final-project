@@ -1,46 +1,43 @@
 #include "Sequence.h"
 #include "Led.h"
-#include <Arduino.h>
+#include "Utils.h"
 
 #define DEFAULT_SIZE 8
 #define MIN_SIZE 4
 
-uint8_t TR_NONE = 0;
-uint8_t TR_LERP = 1;
+const uint8_t TR_NONE = 0;
+const uint8_t TR_LERP = 1;
 
 Keyframe invalid;
 
-Sequence::Sequence() {
+Sequence::Sequence() : count(0), capacity(DEFAULT_SIZE), duration(0) {
 	frames = (Keyframe *) malloc(sizeof(Keyframe) * DEFAULT_SIZE);
 	if (!frames) {
-		//exit("Allocation failed");
+		Log::error("Allocation failed");
 	}
-	count = 0;
-	capacity = DEFAULT_SIZE;
-	duration = 0;
 }
 
 Sequence::~Sequence() {
 	free(frames);
 }
 
-void Sequence::update(uint32_t elapsedMillis, Sequence& seq, /* out */ Color& currentColor) {
+void Sequence::update(uint32_t elapsedMillis, const Sequence& seq, /* out */ Color& currentColor) {
 	uint32_t timeRemaining = elapsedMillis % seq.duration;
 	for (int i = 0; i < seq.count; i++) { // Find correct frame
 		Keyframe& curFrame = seq.frames[i];
-		if (timeRemaining < curFrame.duration) {
+		if (timeRemaining <= curFrame.duration) {
 			if (curFrame.transition == TR_LERP) {
 				Keyframe& nextFrame = seq.frames[ (i+1) % seq.count ];
 				float interp = (float) timeRemaining / (float) curFrame.duration;
 				currentColor.red = (1-interp) * curFrame.value.red + interp * nextFrame.value.red;
 				currentColor.green = (1-interp) * curFrame.value.green + interp * nextFrame.value.green;
 				currentColor.blue = (1-interp) * curFrame.value.blue + interp * nextFrame.value.blue;
-				/*Serial.print("R: ");
-				Serial.print(currentColor.red);
-				Serial.print(" G: ");
-				Serial.print(currentColor.green);
-				Serial.print(" B: ");
-				Serial.println(currentColor.blue);*/
+				/*if (timeRemaining == 2000) {
+					Serial.print("Time = 2000ms"); Serial.print(" {R: ");
+					Serial.print(currentColor.red); Serial.print(" G: ");
+					Serial.print(currentColor.green); Serial.print(" B: ");
+					Serial.print(currentColor.blue); Serial.println("} ");
+				}*/
 			} else {
 				currentColor = curFrame.value;
 			}
@@ -50,13 +47,13 @@ void Sequence::update(uint32_t elapsedMillis, Sequence& seq, /* out */ Color& cu
 	}
 }
 
-void Sequence::apply(uint32_t elapsedMillis, Sequence& seq, ILed& led) {
+void Sequence::apply(uint32_t elapsedMillis, const Sequence& seq, ILed& led) {
 	Color c;
 	update(elapsedMillis, seq, c);
 	led.setColor(c);
 }
 
-Sequence& Sequence::append(const Keyframe frame) {
+Sequence& Sequence::append(const Keyframe& frame) {
 	if (count == capacity) {
 		resize(2 * capacity);
 	}
@@ -66,31 +63,52 @@ Sequence& Sequence::append(const Keyframe frame) {
 	return *this;
 }
 
-Sequence& Sequence::append(Color& color, uint8_t transition, uint32_t duration) {
-	Keyframe frame = {duration, color, transition};
-	append(frame);
-	return *this;
+Sequence& Sequence::append(uint32_t duration, const Color& color) {
+	Keyframe frame = {duration, color, TR_NONE};
+	return append(frame);
 }
 
-Sequence& Sequence::insertAt(uint32_t offset, Color& color, uint8_t transition) {
-	return insertAt(offset, color, transition, 0);
+Sequence& Sequence::append(uint32_t duration, const Color& color, uint8_t transition) {
+	Keyframe frame = {duration, color, transition};
+	return append(frame);
 }
 
-Sequence& Sequence::insertAt(uint32_t offset, Color& color, uint8_t transition, uint32_t duration) {
+Sequence& Sequence::colorAt(uint32_t offset, const Color& color) {
+	return colorAt(offset, 0, color, TR_NONE);
+}
+
+Sequence& Sequence::colorAt(uint32_t offset, const Color& color, uint8_t transition) {
+	return colorAt(offset, 0, color, transition);
+}
+
+Sequence& Sequence::colorAt(uint32_t offset, uint32_t duration, const Color& color) {
+	return colorAt(offset, duration, color, TR_NONE);
+}
+
+Sequence& Sequence::colorAt(uint32_t offset, uint32_t duration, const Color& color, uint8_t transition) {
 	Keyframe frame = {duration, color, transition};
-	for (int i = 0; i < seq.count; i++) {
-		Keyframe& curFrame = seq.frames[i];
+	for (int i = 0; i < count; i++) {
+		Keyframe& curFrame = frames[i];
 		if (offset == 0) {
-			seq.frames[i] = frame;			// replace frame
-		} else if (offset < curFrame.duration) {
-			curFrame.duration = offset;		// insert in the middle, shifting any back if needed
-			insert(i + 1, frame);
+			// if new frame coincides with existing, replace the old frame
+			this->duration += (duration - curFrame.duration);				
+			curFrame = frame;
+			return *this;
+		} else if (offset < curFrame.duration) {	
+			// if new frame in the middle of existing, truncate old frame and insert (shifting back any later frames)
+			this->duration += (offset - curFrame.duration);
+			curFrame.duration = offset;
+			return insert(i + 1, frame);
 		}
+		offset -= curFrame.duration;
 	}
-	return *this;
+	// otherwise, append at end (stretch out the last frame to prevent gaps)
+	frames[count - 1].duration += offset;
+	this->duration += offset;
+	return append(frame);
 }
 
-Sequence& Sequence::insert(uint16_t index, const Keyframe frame) {
+Sequence& Sequence::insert(uint16_t index, const Keyframe& frame) {
 	if (index <= count) {
 		if (count == capacity) {
 			resize(2 * capacity);
@@ -133,39 +151,31 @@ uint16_t Sequence::size() const {
     return count;
 }
 
+uint32_t Sequence::getDuration() {
+	return duration;
+}
+
 void Sequence::resize(const uint16_t newCapacity) {
 	frames = (Keyframe* ) realloc(frames, sizeof(Keyframe) * newCapacity);
 	if (!frames) {
-		exit("Allocation failed");
+		Log::error("Allocation failed");
 	}
 	capacity = newCapacity;
 }
 
-void Sequence::exit(const char* message) const {
-    Serial.print("Error: ");
-    Serial.print(message);
-    Serial.print("\n");
-}
-
-void Sequence::print(uint32_t elapsedMillis) {
-	uint32_t timeRemaining = elapsedMillis % duration;
-	for (int i = 0; i < count; i++) { // Find correct frame
+void Sequence::print() {
+	for (int i = 0; i < count; i++) {
 		Keyframe frame = frames[i];
-		if (timeRemaining < frame.duration) {
-			Serial.print(frame.value.red);
-			Serial.print("\n");
-			Serial.print(frame.value.green);
-			Serial.print("\n");
-			Serial.print(frame.value.blue);
-			Serial.print("\n");
-			break;
-		}
-		timeRemaining -= frame.duration;
+		Serial.print("Duration: ");
+		Serial.print(frame.duration);
+		Serial.print("{ R: ");
+		Serial.print(frame.value.red);
+		Serial.print(" G: ");
+		Serial.print(frame.value.green);
+		Serial.print(" B: ");
+		Serial.print(frame.value.blue);
+		Serial.print(" }\n");
 	}
-}
-
-uint32_t Sequence::getDuration() {
-	return duration;
 }
 
 #undef DEFAULT_SIZE

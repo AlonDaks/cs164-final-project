@@ -17,13 +17,24 @@ SeqNode anim = SeqNode(rgbLed, seq, 3); // Create anim
 AnimPlayer player = AnimPlayer();
 
 void setup() {
-  Keyframe kf1 = {2000, OCEAN, TR_LERP};
-  Keyframe kf2 = {1000, RASPBERRY, TR_LERP};
-  seq.append(kf1).append(kf2);
+  seq.append(2000, OCEAN, TR_LERP)
+     .append(2000, RASPBERRY, TR_LERP);
   
-  uint16_t rec1 = player.play(anim);
+  player.play(anim);
+}
+
+int test = 1;
+
+void doTest() {
+  seq.print();
 }
 
 void loop() {
+  if (test) {
+    delay(2000);
+    doTest();
+    test = 0;
+  }
+  
   player.update();
 }

@@ -19,7 +19,8 @@ const int brightness = 10;
 RgbLedCA rgbLed1 = RgbLedCA(rPin1, gPin1, bPin1, aPin1, true, brightness);
 RgbLedCA rgbLed2 = RgbLedCA(rPin2, gPin2, bPin2, aPin2, true, brightness);
 
-const int pushButtonPin = 14;  
+const int pushButtonPin = 14;
+PushButton btn = PushButton(pushButtonPin, 1000);
 
 ///////////////////////////////////
 // Define AnimNodes:
@@ -62,8 +63,8 @@ struct PlayCyan : public TimeNode {
 ///////////////////////////////////
 // Instantiate:
 
-const uint16_t rgbTime = 1000;
-const uint16_t ycTime = 1666;
+const uint16_t rgbTime = 500;
+const uint16_t ycTime = 333;
 
 PlayRed redAnim = PlayRed(rgbTime);
 PlayGreen greenAnim = PlayGreen(rgbTime);
@@ -78,13 +79,11 @@ AnimPlayer player = AnimPlayer();
 
 int rgbAnimId;
 int ycAnimId;
+int pushCount = -1;
 
 void setup() {
   redAnim.next(greenAnim).next(blueAnim).next(redAnim);
   yellowAnim.next(cyanAnim).next(yellowAnim);
-  
-  rgbAnimId = player.play(redAnim);
-  ycAnimId = player.play(yellowAnim);
 }
 
 int test = 1;
@@ -99,5 +98,39 @@ void loop() {
     test = 0;
   }
   
+  btn.update();
+  if (btn.isPressed()) {
+    updateLedState();
+  }  
   player.update();
+}
+
+void updateLedState() {
+  Serial.println(pushCount);
+  switch (pushCount) {
+    case -1: {
+      rgbAnimId = player.play(redAnim);
+      ycAnimId = player.play(yellowAnim);
+      break;
+    }
+    case 0: {
+      player.pause(rgbAnimId);
+      break;
+    }
+    case 1: {
+      player.resume(rgbAnimId);
+      player.pause(ycAnimId);
+      break;
+    }
+    case 2: {
+      player.pause(rgbAnimId);
+      break;
+    }
+    case 3: {
+      player.resume(rgbAnimId);
+      player.resume(ycAnimId);
+      break;
+    }
+  }
+  pushCount = (pushCount+1) % 4;
 }

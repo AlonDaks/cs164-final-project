@@ -7,21 +7,28 @@ struct Color {
 	uint8_t red;
 	uint8_t green;
 	uint8_t blue;
+
+	Color();
+	Color(uint8_t red, uint8_t green, uint8_t blue);
+	Color(uint32_t hex);
+
+	uint32_t toInt() const;
+	uint32_t toInt(const uint8_t brightness) const;
 };
 
-extern Color RED;
-extern Color ORANGE;
-extern Color YELLOW;
-extern Color SPRING_GREEN;
-extern Color GREEN;
-extern Color TURQUOISE;
-extern Color CYAN;
-extern Color OCEAN;
-extern Color BLUE;
-extern Color VIOLET;
-extern Color MAGENTA;
-extern Color RASPBERRY;
-extern Color WHITE;
-extern Color OFF;
+extern const Color RED;
+extern const Color ORANGE;
+extern const Color YELLOW;
+extern const Color SPRING_GREEN;
+extern const Color GREEN;
+extern const Color TURQUOISE;
+extern const Color CYAN;
+extern const Color OCEAN;
+extern const Color BLUE;
+extern const Color VIOLET;
+extern const Color MAGENTA;
+extern const Color RASPBERRY;
+extern const Color WHITE;
+extern const Color OFF;
 
 #endif

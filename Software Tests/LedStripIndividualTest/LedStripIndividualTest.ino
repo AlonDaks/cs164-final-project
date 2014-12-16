@@ -8,12 +8,12 @@
 const int dataPin = 15;    //yellow
 const int clockPin = 16;   //green
 LedStrip ledStrip = LedStrip(25, dataPin, clockPin, 10);
+AnimPlayer player = AnimPlayer();
 
 ///////////////////////////////////
 
 Sequence seq = Sequence();
 SeqNode anim = SeqNode(ledStrip, seq, FOREVER); // Create anim
-AnimPlayer player = AnimPlayer();
 
 void setup() {
   Keyframe kf1 = {1000, OCEAN, 1 }; // LERP transition

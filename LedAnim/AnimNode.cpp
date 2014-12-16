@@ -2,7 +2,7 @@
 #include "Led.h"
 #include "Sequence.h"
 
-uint32_t FOREVER = 4294967295;
+const uint32_t FOREVER = 4294967295;
 
 /******************************
  * AnimNode functions 
@@ -33,52 +33,122 @@ bool TimeNode::isOver(uint32_t elapsedMillis) {
 }
 
 /******************************
+ * RepNode functions 
+ ******************************/
+
+RepNode::RepNode(uint32_t numRepeats) 
+: numRepeats(numRepeats), curRepeats(0) {}
+
+bool RepNode::isOver(uint32_t elapsedMillis) {
+	if (isRepOver(elapsedMillis)) {
+		curRepeats++;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+AnimNode* RepNode::next() {
+	if (numRepeats == FOREVER || curRepeats <= numRepeats) {
+		return this;
+	} else {
+		return nextNode;
+	}
+}
+
+/******************************
  * SeqNode functions 
  ******************************/
 
-SeqNode::SeqNode(ILed& led, Sequence& seq, uint32_t numRepeats) 
-	: led(led), sequence(seq), numRepeats(numRepeats), curRepeats(0) { }
+SeqNode::SeqNode(ILed& led, Sequence& seq) : SeqNode(led, seq, 0) {}
 
+SeqNode::SeqNode(ILed& led, Sequence& seq, uint32_t numRepeats) 
+: RepNode(numRepeats), led(led), sequence(seq) {}
 
 void SeqNode::update(uint32_t elapsedMillis) {
 	Sequence::apply(elapsedMillis, sequence, led);
 }
 
-bool SeqNode::isOver(uint32_t elapsedMillis) {
-	if (numRepeats == FOREVER) {
-		return false;
-	} else {
-		if (sequence.getDuration() * (curRepeats + 1) < elapsedMillis) {
-			curRepeats++;
-		}
-		return curRepeats > numRepeats; 
-	}
+bool SeqNode::isRepOver(uint32_t elapsedMillis) {
+	return elapsedMillis > sequence.getDuration();
 }
 
 /******************************
- * OffsetNode functions 
+ * BlendNode functions 
  ******************************/
 
-OffsetNode::OffsetNode(ILedArray leds, Sequence& seq, uint32_t (*offsetFunc) (uint16_t)) 
-	: leds(leds), sequence(seq), offsetFunc(offsetFunc) { 
-		maxOffset = 0;
-		for(int i = 0; i < leds.size(); i++){
-			uint32_t currOffset = offsetFunc(i);
-			if(currOffset > maxOffset) {
-				maxOffset = currOffset;
-			}
+BlendNode::BlendNode(ILed& led, Array<Sequence*>& seq, float* weights)
+ : BlendNode(led, seq, weights, 0) {}
+
+BlendNode::BlendNode(ILed& led, Array<Sequence*>& seq, float* weights, uint32_t numRepeats)
+: RepNode(numRepeats), led(led), sequences(seq), weights(weights), length(0) {
+	float totalWeight = 0;
+	for (int i = 0; i < sequences.size(); ++i) {
+		totalWeight += weights[i];
+		uint32_t len = sequences.get(i)->getDuration();
+		if (len > length) {
+			length = len;
 		}
 	}
+	for (int i = 0; i < sequences.size(); ++i) {
+		weights[i] /= totalWeight;			// normalize the weights
+	}
+}
 
+void BlendNode::update(uint32_t elapsedMillis) {
+	float rawRed = 0;
+	float rawGreen = 0;
+	float rawBlue = 0;
+	Color color;
+	for (int i = 0; i < sequences.size(); ++i) {
+		float weight = weights[i];
+		Sequence::update(elapsedMillis, *sequences.get(i), color);
+		rawRed += weight * color.red;
+		rawGreen += weight * color.green;
+		rawBlue += weight * color.blue;
+	}
+	color.red = (uint8_t) (rawRed + 0.5);
+	color.green = (uint8_t) (rawGreen + 0.5);
+	color.blue = (uint8_t) (rawBlue + 0.5);
+	led.setColor(color);
+}
 
-void OffsetNode::update(uint32_t elapsedMillis) {
-	for(int i = 0; i < leds.size(); i++){
-		if(elapsedMillis > offsetFunc(i)){
-			Sequence::apply(elapsedMillis, sequence, leds.get(i));
+bool BlendNode::isRepOver(uint32_t elapsedMillis) {
+	return elapsedMillis > length;
+}
+
+/******************************
+ * DelayNode functions 
+ ******************************/
+
+DelayNode::DelayNode(Array<ILed*>& leds, Sequence& seq, uint32_t (*offsetFunc) (uint16_t))
+: DelayNode(leds, seq, offsetFunc, numRepeats) {}
+
+DelayNode::DelayNode(Array<ILed*>& leds, Sequence& seq, uint32_t (*offsetFunc) (uint16_t), uint32_t numRepeats) 
+: RepNode(numRepeats), leds(leds), sequence(seq), maxOffset(0) {
+	offsets = (uint32_t*) malloc(sizeof(uint32_t) * leds.size());
+	for(int i = 0; i < leds.size(); i++) {
+		uint32_t currOffset = offsetFunc(i);
+		offsets[i] = currOffset;
+		if(currOffset > maxOffset) {
+			maxOffset = currOffset;
 		}
 	}
 }
 
-bool OffsetNode::isOver(uint32_t elapsedMillis) {
+DelayNode::~DelayNode() {
+	free(offsets);
+}
+
+void DelayNode::update(uint32_t elapsedMillis) {
+	for(int i = 0; i < leds.size(); i++){
+		uint32_t offset = offsets[i];
+		if(elapsedMillis > offset){
+			Sequence::apply(elapsedMillis - offset, sequence, *leds.get(i));
+		}
+	}
+}
+
+bool DelayNode::isRepOver(uint32_t elapsedMillis) {
 	return sequence.getDuration() + maxOffset > elapsedMillis;
 }

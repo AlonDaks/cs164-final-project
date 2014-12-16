@@ -16,7 +16,7 @@ SimpleLed::SimpleLed(uint8_t pin, bool isAnalog) : pin(pin), bIsAnalog(isAnalog)
 	pinMode(pin, OUTPUT);
 }
 
-void SimpleLed::setColor(Color& color) {
+void SimpleLed::setColor(const Color& color) {
 	if (bIsAnalog) {
 		analogWrite(pin, color.red);
 	} else if (color.red > HALF_INTENSITY) {
@@ -58,7 +58,7 @@ RgbLedCA::RgbLedCA(uint8_t rPin, uint8_t gPin, uint8_t bPin, uint8_t anodePin, b
 	pinMode(anodePin, OUTPUT);
 }
 
-void RgbLedCA::setColor(Color& color) {
+void RgbLedCA::setColor(const Color& color) {
 	if (brightness > 0) {
 		analogWrite(anodePin, brightness);
 		analogWrite(redPin, brightness - ((uint16_t) color.red * brightness)/MAX_INTENSITY);

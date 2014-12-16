@@ -1,12 +1,11 @@
 /*
- * Implementation of a resizable array that support.
+ * Implementation of a generic resizable array.
  */
 
 #ifndef LED_ANIM_ARRAY_H
 #define LED_ANIM_ARRAY_H
 
-#include <stdint.h>
-#include <Arduino.h>
+#include <Utils.h>
 
 template<typename T>
 class Array {
@@ -31,38 +30,35 @@ public:
     /* Removes the i-th element from the array. Returns null if invalid. */
     T remove(uint16_t index);
 
+    /* Replaces the i-th element with the new element. Returns NULL if invalid. */
+    T replace(uint16_t index, const T item);
+
     /* Returns the number of items in the array */
     uint16_t size() const;
 
-    void print();
+    //void print();
 private:
     /* Resizes the array */
     void resize(const uint16_t newCapacity);
-
-    void exit(const char* message) const;
 };
 
 #define DEFAULT_SIZE 8
 #define MIN_SIZE 4
 
 template<typename T>
-Array<T>::Array() {
+Array<T>::Array() : count(0), capacity(DEFAULT_SIZE) {
     contents = (T *) malloc(sizeof(T) * DEFAULT_SIZE);
     if (!contents) {
-        exit("Allocation failed");
+        Log::error("Allocation failed");
     }
-    count = 0;
-    capacity = DEFAULT_SIZE;
 }
 
 template<typename T>
-Array<T>::Array(uint16_t initCapacity) {
+Array<T>::Array(uint16_t initCapacity) : count(0), capacity(initCapacity) {
     contents = (T *) malloc(sizeof(T) * initCapacity);
     if (!contents) {
-        exit("Allocation failed");
+        Log::error("Allocation failed");
     }
-    count = 0;
-    capacity = initCapacity;
 }
 
 template<typename T>
@@ -81,17 +77,18 @@ void Array<T>::append(const T item) {
 
 template<typename T>
 void Array<T>::insert(uint16_t index, const T item) {
-    if (index <= count) {
-        if (count == capacity) {
-            resize(2 * capacity);
-        }
-        uint16_t numAfter = count - index;
-        if (numAfter > 0) {
-            memmove(contents + index + 1, contents + index, sizeof(T) * numAfter); 
-        }
-        contents[index] = item;
-        count++;
+    if (index > count) {
+        index = count;
     }
+    if (count == capacity) {
+        resize(2 * capacity);
+    }
+    uint16_t numAfter = count - index;
+    if (numAfter > 0) {
+        memmove(contents + index + 1, contents + index, sizeof(T) * numAfter); 
+    }
+    contents[index] = item;
+    count++;
 }
 
 template<typename T>
@@ -119,34 +116,38 @@ T Array<T>::remove(uint16_t index) {
 }
 
 template<typename T>
-uint16_t Array<T>::size() const {
-    return count;
+T Array<T>::replace(uint16_t index, const T item) {
+    if (index < count) {
+        T value = contents[index];
+        contents[index] = item;
+        return value;
+    } else {
+        return NULL;
+    }
 }
 
 template<typename T>
-void Array<T>::print() {
-    for (int i = 0; i < count; ++i) {
-        Serial.print(contents[i]);
-        Serial.print(" ");
-    }
-    Serial.print("\n");
+uint16_t Array<T>::size() const {
+    return count;
 }
 
 template<typename T>
 void Array<T>::resize(const uint16_t newCapacity) {
     contents = (T* ) realloc(contents, sizeof(T) * newCapacity);
     if (!contents) {
-        exit("Allocation failed");
+        Log::error("Allocation failed");
     }
     capacity = newCapacity;
 }
 
-template<typename T>
-void Array<T>::exit(const char* message) const {
-    Serial.print("Error: ");
-    Serial.print(message);
+/*template<typename T>
+void Array<T>::print() {
+    for (int i = 0; i < count; ++i) {
+        Serial.print(contents[i]);
+        Serial.print(" ");
+    }
     Serial.print("\n");
-}
+}*/
 
 #undef DEFAULT_SIZE
 #undef MIN_SIZE

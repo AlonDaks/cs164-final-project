@@ -8,18 +8,18 @@
 const int dataPin = 15;    //yellow
 const int clockPin = 16;   //green
 LedStrip ledStrip = LedStrip(25, dataPin, clockPin, 10);
+AnimPlayer player = AnimPlayer();
 
 ///////////////////////////////////
 
 Sequence seq = Sequence();
 SeqNode anim = SeqNode(ledStrip, seq, FOREVER); // Create anim
-AnimPlayer player = AnimPlayer();
 
 void setup() {
-  /*seq.append(OCEAN, TR_LERP, 1000)
-     .append(YELLOW, TR_LERP, 1000)
-     .append(RED, TR_LERP, 1000)
-     .append(MAGENTA, TR_LERP, 1000);*/
+  seq.append(seconds(1), OCEAN, TR_LERP)
+     .append(seconds(1), YELLOW, TR_LERP)
+     .append(seconds(1), Color(3, 125, 223), TR_LERP)
+     .append(seconds(1), MAGENTA, TR_LERP);
   /*
   // colorAt() tests
   seq.append(RED, TR_NONE, 2000);
