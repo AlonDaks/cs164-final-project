@@ -1,0 +1,50 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Array			KEYWORD1
+AnimNode		KEYWORD1
+TimeNode		KEYWORD1
+SeqNode			KEYWORD1
+AnimPlayer		KEYWORD1
+Color			KEYWORD1
+ILed			KEYWORD1
+SimpleLed		KEYWORD1
+RGBLedCA		KEYWORD1
+Sequence		KEYWORD1
+Keyframe		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+add				KEYWORD2
+setValue		KEYWORD2
+update			KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+# Duration
+FOREVER			LITERAL1
+
+# Transitions
+TR_NONE			LITERAL1
+TR_LERP			LITERAL1
+
+# Colors
+RED				LITERAL1
+ORANGE			LITERAL1
+YELLOW			LITERAL1
+SPRING_GREEN	LITERAL1
+GREEN			LITERAL1
+TURQUOISE		LITERAL1
+CYAN			LITERAL1
+OCEAN			LITERAL1
+BLUE			LITERAL1
+VIOLET			LITERAL1
+MAGENTA			LITERAL1
+RASPBERRY		LITERAL1
+WHITE			LITERAL1
+OFF				LITERAL1

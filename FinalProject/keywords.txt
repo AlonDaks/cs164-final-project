@@ -1,9 +1,0 @@
-Sequence	KEYWORD1
-add	KEYWORD2
-Color	KEYWORD1
-Led	KEYWORD1
-setValue	KEYWORD2
-SequencePlayer	KEYWORD1
-addActiveLight	KEYWORD2
-update	KEYWORD2
-RGBLed	KEYWORD1
