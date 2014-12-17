@@ -6,7 +6,7 @@ int aPin = 22;  // cathode
 int rPin = 23;  // red pin
 int gPin = 21;  // green pin
 int bPin = 20;  // blue pin
-int brightness = 10;
+int brightness = 255;
 RgbLedCA rgbLed = RgbLedCA(rPin, gPin, bPin, aPin, true, brightness);
 
 ///////////////////////////////////
@@ -17,8 +17,10 @@ SeqNode anim = SeqNode(rgbLed, seq, 3); // Create anim
 AnimPlayer player = AnimPlayer();
 
 void setup() {
-  seq.append(2000, OCEAN, TR_LERP)
-     .append(2000, RASPBERRY, TR_LERP);
+  seq.append(500, OCEAN, TR_LERP)
+     .append(500, RASPBERRY, TR_LERP)
+     .append(500, GREEN, TR_LERP)
+     .append(500, WHITE, TR_LERP);
   
   player.play(anim);
 }

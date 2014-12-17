@@ -8,7 +8,8 @@
 
 const int dataPin = 15;    //yellow
 const int clockPin = 16;   //green
-LedStrip ledStrip = LedStrip(25, dataPin, clockPin, 10);
+const int brightness = 255;
+LedStrip ledStrip = LedStrip(25, dataPin, clockPin, brightness);
 AnimPlayer player = AnimPlayer();
 
 ///////////////////////////////////
@@ -64,7 +65,7 @@ struct LevelNode : public TimeNode {
 ///////////////////////////////////
 
 Sequence seq = Sequence();
-SeqNode anim = SeqNode(ledStrip, seq, 1); // Create anim
+SeqNode anim = SeqNode(ledStrip, seq, 3); // Create anim
 
 SpiralNode spiralRed = SpiralNode(100, RED);
 RotateNode rotateBlue = RotateNode(5, BLUE);
@@ -72,14 +73,20 @@ LevelNode levelGreen = LevelNode(1000, GREEN);
 
 void setup() {
   // Add keyframes:
-  Keyframe kf1 = {1000, OCEAN, TR_LERP }; // LERP transition
-  Keyframe kf2 = {1000, YELLOW, TR_LERP }; // NONE transition
-  seq.append(kf1).append(kf2);
+  seq.append(seconds(1), OCEAN, TR_LERP)
+     .append(seconds(1), YELLOW, TR_LERP)
+     .append(seconds(1), RASPBERRY, TR_LERP)
+     .append(seconds(1), TURQUOISE, TR_LERP)
+     .append(seconds(1), MAGENTA, TR_LERP)
+     .append(seconds(1), ORANGE, TR_LERP);
   
   // Link nodes:
-  spiralRed.next(rotateBlue).next(levelGreen).next(spiralRed);
+  //anim.next(spiralRed).next(rotateBlue).next(levelGreen).next(spiralRed);
+  //anim.next(anim);
+  anim.next(spiralRed).next(rotateBlue).next(levelGreen).next(anim);
   
-  uint16_t rec1 = player.play(spiralRed);
+  //uint16_t rec1 = player.play(spiralRed);
+  player.play(anim);
 }
 
 void loop() {

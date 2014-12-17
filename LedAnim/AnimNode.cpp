@@ -40,12 +40,13 @@ RepNode::RepNode(uint32_t numRepeats)
 : numRepeats(numRepeats), curRepeats(0) {}
 
 bool RepNode::isOver(uint32_t elapsedMillis) {
-	if (isRepOver(elapsedMillis)) {
+	if ((length() * curRepeats + 1) < elapsedMillis) {
 		curRepeats++;
 	}
 	if (numRepeats == FOREVER || curRepeats <= numRepeats) {
 		return false;
 	} else {
+		curRepeats = 0;
 		return true;
 	}
 
@@ -64,8 +65,8 @@ void SeqNode::update(uint32_t elapsedMillis) {
 	Sequence::apply(elapsedMillis, sequence, led);
 }
 
-bool SeqNode::isRepOver(uint32_t elapsedMillis) {
-	return elapsedMillis > sequence.getDuration();
+uint32_t SeqNode::length() {
+	return sequence.getDuration();
 }
 
 /******************************
@@ -76,13 +77,13 @@ BlendNode::BlendNode(ILed& led, Array<Sequence*>& seq, float* weights)
  : BlendNode(led, seq, weights, 0) {}
 
 BlendNode::BlendNode(ILed& led, Array<Sequence*>& seq, float* weights, uint32_t numRepeats)
-: RepNode(numRepeats), led(led), sequences(seq), weights(weights), length(0) {
+: RepNode(numRepeats), led(led), sequences(seq), weights(weights), _length(0) {
 	float totalWeight = 0;
 	for (int i = 0; i < sequences.size(); ++i) {
 		totalWeight += weights[i];
 		uint32_t len = sequences.get(i)->getDuration();
-		if (len > length) {
-			length = len;
+		if (len > _length) {
+			_length = len;
 		}
 	}
 	for (int i = 0; i < sequences.size(); ++i) {
@@ -108,8 +109,8 @@ void BlendNode::update(uint32_t elapsedMillis) {
 	led.setColor(color);
 }
 
-bool BlendNode::isRepOver(uint32_t elapsedMillis) {
-	return elapsedMillis > length;
+uint32_t BlendNode::length() {
+	return _length;
 }
 
 /******************************
@@ -155,16 +156,10 @@ void DelayNode::update(uint32_t elapsedMillis) {
 	}
 }
 
-bool DelayNode::isRepOver(uint32_t elapsedMillis) {
-	bool val = (sequence.getDuration() + maxOffset) < elapsedMillis;
-	//Serial.print("repOVer");
-	//Serial.println(val);
-	return val;
-}
-
-uint32_t DelayNode::totalDuration() {
+uint32_t DelayNode::length() {
 	return sequence.getDuration() + maxOffset;
 }
+
 
 /******************************
  * MultiNode functions 

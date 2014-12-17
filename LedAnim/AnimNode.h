@@ -46,7 +46,7 @@ protected:
 
 /* AnimNode that repeats for a set amount of times. */
 struct RepNode : public AnimNode {
-	virtual bool isRepOver(uint32_t elapsedMillis) = 0;
+	virtual uint32_t length() = 0;
 	virtual bool isOver(uint32_t elapsedMillis) override;
 protected:
 	RepNode(uint32_t numRepeats);
@@ -59,7 +59,7 @@ struct SeqNode : public RepNode {
 	SeqNode(ILed& led, Sequence& seq);
 	SeqNode(ILed& led, Sequence& seq, uint32_t numRepeats);
 	virtual void update(uint32_t elapsedMillis) override;
-	virtual bool isRepOver(uint32_t elapsedMillis) override;
+	virtual uint32_t length() override;
 protected:
 	ILed& led;
 	Sequence& sequence;
@@ -70,12 +70,12 @@ struct BlendNode : public RepNode {
 	BlendNode(ILed& led, Array<Sequence*>& seq, float* weights);
 	BlendNode(ILed& led, Array<Sequence*>& seq, float* weights, uint32_t numRepeats);
 	virtual void update(uint32_t elapsedMillis) override;
-	virtual bool isRepOver(uint32_t elapsedMillis) override;
+	virtual uint32_t length() override;
 protected:
 	ILed& led;
 	Array<Sequence*>& sequences;
 	float* weights;
-	uint32_t length;
+	uint32_t _length;
 };
 
 /* AnimNode that plays a particular sequence on an array of LEDs, each offset by some amount. */
@@ -84,8 +84,7 @@ struct DelayNode : public RepNode {
 	DelayNode(Array<ILed*>& leds, Sequence& seq, unsigned int (*offsetFunc) (int), uint32_t numRepeats);
 	~DelayNode();
 	virtual void update(uint32_t elapsedMillis) override;
-	virtual bool isRepOver(uint32_t elapsedMillis) override;
-	uint32_t totalDuration();
+	virtual uint32_t length() override;
 protected:
 	Array<ILed*>& leds;
 	Sequence& sequence;
