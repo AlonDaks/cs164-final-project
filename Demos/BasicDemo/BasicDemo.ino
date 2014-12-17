@@ -2,6 +2,8 @@
 
 ///////////////////////////////////
 
+// Hardware setup:
+
 int aPin = 22;  // cathode
 int rPin = 23;  // red pin
 int gPin = 21;  // green pin
@@ -11,32 +13,19 @@ RgbLedCA rgbLed = RgbLedCA(rPin, gPin, bPin, aPin, true, brightness);
 
 ///////////////////////////////////
 
-Sequence seq = Sequence();
-SeqNode anim = SeqNode(rgbLed, seq, 3); // Create anim
-
 AnimPlayer player = AnimPlayer();
 
+Sequence seq = Sequence();
+SeqNode anim = SeqNode(rgbLed, seq, 2);
+
 void setup() {
-  seq.append(500, OCEAN, TR_LERP)
-     .append(500, RASPBERRY, TR_LERP)
-     .append(500, GREEN, TR_LERP)
-     .append(500, WHITE, TR_LERP);
-  
+  seq.append(seconds(0.5), OCEAN, TR_LERP)
+     .append(seconds(0.5), RASPBERRY, TR_LERP)
+     .append(seconds(0.5), GREEN, TR_LERP)
+     .append(seconds(0.5), WHITE, TR_LERP);
   player.play(anim);
 }
 
-int test = 1;
-
-void doTest() {
-  seq.print();
-}
-
 void loop() {
-  if (test) {
-    delay(2000);
-    doTest();
-    test = 0;
-  }
-  
   player.update();
 }
